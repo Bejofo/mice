@@ -3,18 +3,15 @@
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
-$(document).ready(function(){
-    $("button").click(function(){
-        $("#div1").load("demo_test.txt");
-    });
+$(function(){
+setInterval(oneSecondFunction, 1000);
 });
+function oneSecondFunction() {
+ $("#div1").load("https://gist.githubusercontent.com/Bejofo/b33d2f1de3ac18e0a27d1ef0925c4a12/raw/e7512372b005409b1ac00343622dd07aefbf6f0f/chat.txt");
+}
 </script>
 </head>
 <body>
-
 <div id="div1"><h2>Let jQuery AJAX Change This Text</h2></div>
-
-<button>Get External Content</button>
-
 </body>
 </html>
