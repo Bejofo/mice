@@ -3,12 +3,9 @@
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
-$(function(){
-setInterval(oneSecondFunction, 1000);
-});
-function oneSecondFunction() {
- $("#div1").load("https://gist.github.com/Bejofo/b33d2f1de3ac18e0a27d1ef0925c4a12/raw/");
-}
+setInterval(function() {
+  $("#div1").load("https://gist.github.com/Bejofo/b33d2f1de3ac18e0a27d1ef0925c4a12/raw/");
+}, 5000);
 </script>
 </head>
 <body>
