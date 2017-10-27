@@ -1,0 +1,68 @@
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<h2><div id="txt"></div></h2>
+
+<div class="progress">
+  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+  aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:50%">
+    50% Complete (info)
+  </div>
+</div>
+  
+<script>
+function determinePeriod() {
+    var h = today.getHours();
+    var m = today.getMinutes();
+    if (h >= 7 && m >= 45 && h <= 9 && m <= 5)
+    {
+      return 1;
+    }
+    if (h >= 9 && m >= 15 && h <= 10 && m <= 35)
+    {
+      return 2;
+    }
+    if (h >= 11 && m >= 25 && h <= 12 && m <= 45)
+    {
+      return 3;
+    }
+    if (h >= 12 && m >= 50 && h <= 2 && m <= 10)
+    {
+      return 4;
+    }
+    if (h >= 2 && m >= 15 && h <= 3 && m <= 35)
+    {
+      return 5;
+    } 
+    else
+    {
+      return 0;
+    }
+}
+function updateBar()
+  {
+    if (determinePeriod() == 0)
+    {
+      //Do Something about it
+    }
+    if (determinePeriod() == 1)
+    {
+      //Do Something about it
+    }
+    if (determinePeriod() == 2)
+    {
+      //Do Something about it
+    }
+  }
+function timeToSecs(a,b)
+function checkTime(i) {
+    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+    return i;
+}
+</script>
+</head>
+<body onload="updateBar()">
