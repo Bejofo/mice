@@ -1,14 +1,27 @@
-<!DOCTYPE html>
+
 <html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<div class="w3-container w3-green w3-center" style="width:25%">25%</div>
+It is now:
 <head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
-setInterval(function() {
-  $("#div1").load("https://gist.github.com/Bejofo/b33d2f1de3ac18e0a27d1ef0925c4a12/raw/");
-}, 5000);
+function startTime() {
+    var today = new Date();
+    var h = today.getHours();
+    var m = today.getMinutes();
+    var s = today.getSeconds();
+    m = checkTime(m);
+    s = checkTime(s);
+    document.getElementById('txt').innerHTML =
+    h + ":" + m + ":" + s;
+    var t = setTimeout(startTime, 500);
+}
+function checkTime(i) {
+    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+    return i;
+}
 </script>
 </head>
-<body>
-<div id="div1"><h2>Let jQuery AJAX Change This Text</h2></div>
-</body>
-</html>
+<body onload="startTime()">
+<div id="txt"></div>
