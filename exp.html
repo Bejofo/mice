@@ -1,76 +1,38 @@
-<html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta charset="utf-8">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<h2><div id="txt"></div></h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
 
-<div class="progress">
-  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
-  aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:50%" id="myBar">
-    50% Complete (info)
+<div class="container">
+<br>
+  <div class="progress">
+    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:40%" id="1">
+      <p style="color:BlanchedAlmond;">40</p>
+    </div>
   </div>
 </div>
   
-<script>
-function determinePeriod() {
-    var h = today.getHours();
-    var m = today.getMinutes();
-    if (h >= 7 && m >= 45 && h <= 9 && m <= 5)
+  <script>
+function updateBar(p) {
+  	if (p <= 3)
     {
-      return 1;
-    }
-    if (h >= 9 && m >= 15 && h <= 10 && m <= 35)
+    document.getElementById("1").style = "width:"+5+"%";
+    document.getElementById("1").innerHTML = Math.ceil(p* 10) / 10 + "%"
+   	} else
     {
-      return 2;
-    }
-    if (h >= 11 && m >= 25 && h <= 12 && m <= 45)
-    {
-      return 3;
-    }
-    if (h >= 12 && m >= 50 && h <= 14 && m <= 10)
-    {
-      return 4;
-    }
-    if (h >= 14 && m >= 15 && h <= 15 && m <= 35)
-    {
-      return 5;
-    } 
-    else
-    {
-      return 0;
+    document.getElementById("1").style = "width:"+p+"%";
+    document.getElementById("1").innerHTML = Math.ceil(p * 10) / 10 + "%"
     }
 }
-function updateBar()
-  {
-    var h = today.getHours();
-    var m = today.getMinutes();
-    var s = today.getSeconds();
-    var myb = document.getElementById("myBar");   
-    if (determinePeriod() == 0)
-    {
-      //Do Something about it
-    }
-    if (determinePeriod() == 1)
-    {
-      4800/-timeToSecs(h,m,s)
-      myb.innerHTML = width  + '%';
-    }
-    if (determinePeriod() == 2)
-    {
-      //Do Something about it
-    }
-  }
-function timeToSecs(a,b,c)
- {
-   return a*3600+b*60+c    
- }
-function checkTime(i) {
-    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
-    return i;
-}
-</script>
-</head>
-<body onload="updateBar()">
+updateBar(2.5);
+  </script>
+  
+</body>
+</html>
