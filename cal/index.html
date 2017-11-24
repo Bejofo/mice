@@ -269,7 +269,7 @@ g.connect(context.destination)
 o.frequency.value = notes[note][pitch] 
 console.log(notes[note][pitch] )
 o.start(0)
-g.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 0.5)
+g.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 0.1)
 setTimeout(function(){
 o.stop()
 }, 1000);
