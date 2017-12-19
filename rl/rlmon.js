@@ -38,8 +38,8 @@ floor:{
 var Game = {
 	map:[],
 	gameOptions: {
-		width: 120,
-		height: 40
+		displayWidth: 120,
+		displayHeight: 40
 	},
 	createDisplay: function(displayWidth, displayHeight) {
 		return new ROT.Display({width: displayWidth, height: displayHeight});
@@ -68,8 +68,8 @@ var Game = {
 	},
 
 	createMap: function() {
-		for (x = 0; x < this.gameOptions.width; x++){
-			for (y = 0; y < this.gameOptions.height; y++){
+		for (x = 0; x < this.gameOptions.displayWidth; x++){
+			for (y = 0; y < this.gameOptions.displayHeight; y++){
 			this.map[x][y] = {terrain:null};
 			}
 		}
@@ -97,8 +97,8 @@ var Game = {
  
 
 	drawMap: function() {
-		for (var x=0;x!=this.gameOptions.width;x++) {
-			for (var y=0; y!=this.gameOptions.height;y++)
+		for (var x=0;x!=this.gameOptions.displayWidth;x++) {
+			for (var y=0; y!=this.gameOptions.displayHeight;y++)
 			{
 				Game.display.draw(x, y, this.map[x][y].terrain.icon);
 			}
@@ -122,9 +122,9 @@ var Game = {
 	// Game Setup
 	
 	init: function() {
-		this.display = this.createDisplay(this.gameOptions.width, this.gameOptions.height);
+		this.display = this.createDisplay(this.gameOptions.displayWidth, this.gameOptions.displayHeight);
 		this.container = this.createContainer(this.display);
-		for (var z=0;z!=this.gameOptions.width;z++){
+		for (var z=0;z!=this.gameOptions.displayWidth;z++){
 		this.map.push([]);}
 		document.body.appendChild(this.container);
 		this.colorCombos.whiteBlack = this.createColors(this.colors.white, this.colors.black);
@@ -141,7 +141,7 @@ function Player(x, y){
 	this.y = y;
 	this.askingForDoorClose = false;
 	this.draw = function() {
-		Game.display.draw(this.x, this.y, "@", Game.colors.green);
+		Game.display.draw(Game.gameOptions.displayWidth/2, Game.gameOptions.displayHeight/2, "@", Game.colors.green);
 	};
 	this.enableMovement = function() {
 		window.addEventListener("keydown", this);
@@ -193,12 +193,12 @@ function reDrawScreen(){
 	Game.display.clear(); 
 	fov.compute(you.x, you.y, 10, function(x, y, r, visibility) {
 		ch = Game.map[x][y].terrain.icon;
-		Game.display.draw(x, y, ch);
+		Game.display.draw(Game.gameOptions.displayWidth/2 + (x-you.x),Game.gameOptions.displayHeight/2+(y-you.y) , ch);
 	})
 	you.draw();
 } 
 var lightPasses = function(x, y) {
-	if (x<=0||y<=0||x>=Game.gameOptions.width||y>=Game.gameOptions.height){return false;}
+	if (x<=0||y<=0||x>=Game.gameOptions.displayWidth||y>=Game.gameOptions.height){return false;}
     if(Game.map[x][y].terrain.blocksLight)
 	{
 		return false;
