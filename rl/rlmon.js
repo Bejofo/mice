@@ -1,4 +1,5 @@
-ROT.RNG.setSeed(1234321);
+ROT.RNG.setSeed(Math.floor((Math.random() * 100) + 1));
+console.log(ROT.RNG.getSeed());
 var you;
 var monsters ={
 bogeyman :{
