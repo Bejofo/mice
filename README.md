@@ -1,2 +1,2 @@
-# Mice
-[A bizarre collection of stuff I made](https://bejofo.github.io/mice/index.html "My stuff")
+# meese
+<awidbwiw fdwwoedwwfw fdiewnf;n jrHPHLJLREJRD ,KNnlfhfllalreahllafuahalshilskfsfszlfLFeslfkHS Fhoesfseyfwfusfwkifbeskcszifsf>
