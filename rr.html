@@ -321,9 +321,18 @@ q.TIMEOUTS);d.once("complete",function(a,b){a=!a&&b;c.logAction(c.LOG_MICRO,"(JS
 G,J.ProtocolMessage=I.ProtocolMessage=z)}).call({});if("object"===typeof exports&&exports){for(var obj in window.Ably)window.Ably.hasOwnProperty(obj)&&(exports[obj]=window.Ably[obj]);exports.__esModule=!0}"function"===typeof define&&define.amd&&define("ably",[],function(){return window.Ably});
 </script>
 <script>
+function wait(ms){
+   var start = new Date().getTime();
+   var end = start;
+   while(end < start + ms) {
+     end = new Date().getTime();
+  }
+}
 var realtime = new Ably.Realtime("8tpiVA.qwd5Xw:gx-0R-H3XNqWLt_D");
     var channel = realtime.channels.get("rr");
     channel.subscribe(function(msg) {
        document.getElementById("dab").innerHTML = "rr";
+       wait(3000) 
+      window.close();
     });
 </script>
