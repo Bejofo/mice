@@ -1,8 +1,8 @@
-<div id="dab">rr</div>
+<div id="dab">nrr</div>
 <script>
 var realtime = new Ably.Realtime("8tpiVA.qwd5Xw:gx-0R-H3XNqWLt_D");
     var channel = realtime.channels.get("rr");
     channel.subscribe(function(msg) {
-       document.getElementById("dab").innerHTML
+       document.getElementById("dab").innerHTML = rr;
     });
 </script>
