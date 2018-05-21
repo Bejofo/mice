@@ -1,4 +1,4 @@
-<div id="dab">nrr</div>
+<div id="dab">n</div>
 <script>
 /*
  Copyright 2018, Ably
@@ -331,8 +331,8 @@ function wait(ms){
 var realtime = new Ably.Realtime("8tpiVA.qwd5Xw:gx-0R-H3XNqWLt_D");
     var channel = realtime.channels.get("rr");
     channel.subscribe(function(msg) {
-       document.getElementById("dab").innerHTML = "rr";
-       wait(3000) 
+       document.getElementById("dab").innerHTML = JSON.stringify(msg.data);
+      wait(3000) 
       window.close();
     });
 </script>
