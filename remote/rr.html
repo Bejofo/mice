@@ -12,6 +12,7 @@ var realtime = new Ably.Realtime("8tpiVA.qwd5Xw:gx-0R-H3XNqWLt_D");
     var channel = realtime.channels.get("rr");
     channel.subscribe(function(msg) {
       if (msg.data == "exit"){
+         document.getElementById("dab").innerHTML = msg.data;
          wait(1000);
          window.close();
       }
