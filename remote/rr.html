@@ -11,8 +11,7 @@ function wait(ms){
 var realtime = new Ably.Realtime("8tpiVA.qwd5Xw:gx-0R-H3XNqWLt_D");
     var channel = realtime.channels.get("rr");
     channel.subscribe(function(msg) {
-       document.getElementById("dab").innerHTML = msg.data;
-      wait(3000) 
-      window.close();
+      document.getElementById("dab").innerHTML = msg.data;
+      wait(1000); 
     });
 </script>
