@@ -1,6 +1,6 @@
+<div id="dab">n</div>
 <script src="ably.js"></script>
 <script>
-var dab = "null";
 function wait(ms){
    var start = new Date().getTime();
    var end = start;
@@ -16,7 +16,7 @@ var realtime = new Ably.Realtime("8tpiVA.qwd5Xw:gx-0R-H3XNqWLt_D");
          wait(1000);
          window.close();
       }
-      dab = msg.data;
+      document.getElementById("dab").innerHTML = msg.data;
       wait(1000); 
     });
 </script>
