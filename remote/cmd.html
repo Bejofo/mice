@@ -8,6 +8,30 @@
      var realtime = new Ably.Realtime("8tpiVA.1ru_8g:k6me0SrZyfPWnBKa"); 
      var channel = realtime.channels.get("rr");
      function send(){
-     channel.publish("update", document.getElementById('inlineFormInput').value);
- 	}
+     channel.publish("update", parse(document.getElementById('inlineFormInput').value));
+ 	   }
+ 
+  
+  function parse(str){
+	var e = str.split("");
+	var i = 0;
+	var ai = 0;
+	var results = [""];
+	while (i <= e.length-1){
+		if (e[i] == "\\" ){
+			results[ai] += (e[i+1])
+			i += 2;
+			continue;
+		}
+		if (e[i] == ","){
+			ai += 1;
+			results[ai]="";
+			i++;
+			continue
+		}
+		results[ai] += e[i];
+		i++;
+	}
+	return  {c:results[0], p:results.slice(1)};
+}
 </script>
