@@ -1,0 +1,101 @@
+<canvas id="myCanvas"></canvas>
+<script src = "https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src = "https://cdn.rawgit.com/pshihn/rough/master/dist/rough.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAiZgYhoy51G5o3MsB66eglg3E3mWOghp4",
+    authDomain: "can-i-rename-this-later.firebaseapp.com",
+    databaseURL: "https://can-i-rename-this-later.firebaseio.com",
+    projectId: "can-i-rename-this-later",
+    storageBucket: "can-i-rename-this-later.appspot.com",
+    messagingSenderId: "409697724338"
+  };
+  firebase.initializeApp(config);
+</script>
+<script>
+var ref = firebase.database().ref('wb');
+
+function updatewb(){
+	firebase.database().ref('wb').set(document.getElementById('myCanvas').toDataURL());
+}
+
+function paintgivenBase64(b){
+	var image = new Image();
+	image.onload = function() {
+  		ctx.drawImage(image, 0, 0);
+	};
+	image.src = b;
+}
+
+
+
+ref.on('value', function(snapshot) {
+   paintgivenBase64(snapshot.val());
+});
+
+var ctx = document.getElementById('myCanvas').getContext("2d");
+const rc = rough.canvas(document.getElementById('myCanvas'));
+var linemode,smode,cmodesx,sy;
+linemode = false;
+smode = false;
+cmode = false;
+Math.getDistance = function( x1, y1, x2, y2 ) {
+	var xs = x2 - x1,ys = y2 - y1;		
+	xs *= xs;
+	ys *= ys;
+	return Math.sqrt( xs + ys );
+};
+$('#myCanvas').attr('width',"1200").attr('height',"600")
+$('#myCanvas').mousedown(function(evt){
+	if (!smode && !cmode){
+	linemode = true;
+	}
+	sx = evt.pageX - $('#myCanvas').offset().left;
+	sy = evt.pageY - $('#myCanvas').offset().top;
+})
+$('#myCanvas').mousemove(function(evt){
+	if (linemode && !smode){
+		var x = evt.pageX - $('#myCanvas').offset().left;
+		var y = evt.pageY - $('#myCanvas').offset().top;
+		if (Math.getDistance(sx,sy,x,y) > 3){
+			updatewb();
+			rc.line(x, y, sx, sy);
+			sx = x;
+			sy = y;
+		}
+
+	}
+})
+$('#myCanvas').mouseup(function(evt){
+	linemode = false;
+	if (smode){
+		var x = evt.pageX - $('#myCanvas').offset().left;
+		var y = evt.pageY - $('#myCanvas').offset().top;
+		rc.rectangle(sx, sy, Math.abs(x-sx), Math.abs(y-sy), {bowing: 1, roughness: 2});
+	}
+	if (cmode){
+		var x = evt.pageX - $('#myCanvas').offset().left;
+		var y = evt.pageY - $('#myCanvas').offset().top;
+		rc.ellipse(sx, sy, Math.abs(x-sx)*2, Math.abs(y-sy)*2);
+	}
+	updatewb();
+})
+$('body').keydown(function(evt){ //67
+	if(evt.which == 83){
+		smode = true;
+	}
+	if(evt.which == 67){
+		cmode = true;
+	}
+})
+$('body').keyup(function(evt){
+	if(evt.which == 83){
+		smode = false;
+	}
+	if(evt.which == 67){
+		cmode = false;
+	}
+})
+</script>
