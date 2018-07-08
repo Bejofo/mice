@@ -16,6 +16,12 @@
 </script>
 <script>
 var ref = firebase.database().ref('wb');
+var canvas = document.getElementById('myCanvas');
+
+function clear(){
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	updatewb();
+}
 
 function updatewb(){
 	firebase.database().ref('wb').set(document.getElementById('myCanvas').toDataURL());
@@ -24,6 +30,9 @@ function updatewb(){
 function paintgivenBase64(b){
 	var image = new Image();
 	image.onload = function() {
+		if (!linemode){
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		}
   		ctx.drawImage(image, 0, 0);
 	};
 	image.src = b;
