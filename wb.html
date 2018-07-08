@@ -1,101 +1,146 @@
+<style type="text/css">
+   div#dialog {
+   display:none;
+   }
+   input#strokeWidth ,#lineBreaks,#sroughness,#sBowing{
+   width: 60px
+   }
+</style>
+<div id="dialog" title="Options">
+   Color: <input type="text" id ="penColor" value ="rgb(0,0,0)"><br>
+   Stroke Width: <input type="text" id ="strokeWidth" value ="1"><br>
+   Line breaks : <input type="text" id ="lineBreaks" value ="3"><br> 
+   Sqaure Rough: <input type="text" id ="sroughness" value ="2"> <br>
+   Bowing: <input type="text" id ="sBowing" value ="1"><br> 
+   <button onclick="c()">Clear</button><br>
+   <button onclick="reset2default()">Reset to default</button>
+</div>
 <canvas id="myCanvas"></canvas>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src = "https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src = "https://cdn.rawgit.com/pshihn/rough/master/dist/rough.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
-  // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyAiZgYhoy51G5o3MsB66eglg3E3mWOghp4",
-    authDomain: "can-i-rename-this-later.firebaseapp.com",
-    databaseURL: "https://can-i-rename-this-later.firebaseio.com",
-    projectId: "can-i-rename-this-later",
-    storageBucket: "can-i-rename-this-later.appspot.com",
-    messagingSenderId: "409697724338"
-  };
-  firebase.initializeApp(config);
+   // Initialize Firebase
+   var config = {
+     apiKey: "AIzaSyAiZgYhoy51G5o3MsB66eglg3E3mWOghp4",
+     authDomain: "can-i-rename-this-later.firebaseapp.com",
+     databaseURL: "https://can-i-rename-this-later.firebaseio.com",
+     projectId: "can-i-rename-this-later",
+     storageBucket: "can-i-rename-this-later.appspot.com",
+     messagingSenderId: "409697724338"
+   };
+   firebase.initializeApp(config);
 </script>
 <script>
-var ref = firebase.database().ref('wb');
-
-function updatewb(){
-	firebase.database().ref('wb').set(document.getElementById('myCanvas').toDataURL());
-}
-
-function paintgivenBase64(b){
-	var image = new Image();
-	image.onload = function() {
-  		ctx.drawImage(image, 0, 0);
-	};
-	image.src = b;
-}
-
-
-
-ref.on('value', function(snapshot) {
-   paintgivenBase64(snapshot.val());
-});
-
-var ctx = document.getElementById('myCanvas').getContext("2d");
-const rc = rough.canvas(document.getElementById('myCanvas'));
-var linemode,smode,cmodesx,sy;
-linemode = false;
-smode = false;
-cmode = false;
-Math.getDistance = function( x1, y1, x2, y2 ) {
-	var xs = x2 - x1,ys = y2 - y1;		
-	xs *= xs;
-	ys *= ys;
-	return Math.sqrt( xs + ys );
-};
-$('#myCanvas').attr('width',"1200").attr('height',"600")
-$('#myCanvas').mousedown(function(evt){
-	if (!smode && !cmode){
-	linemode = true;
-	}
-	sx = evt.pageX - $('#myCanvas').offset().left;
-	sy = evt.pageY - $('#myCanvas').offset().top;
-})
-$('#myCanvas').mousemove(function(evt){
-	if (linemode && !smode){
-		var x = evt.pageX - $('#myCanvas').offset().left;
-		var y = evt.pageY - $('#myCanvas').offset().top;
-		if (Math.getDistance(sx,sy,x,y) > 3){
-			updatewb();
-			rc.line(x, y, sx, sy);
-			sx = x;
-			sy = y;
-		}
-
-	}
-})
-$('#myCanvas').mouseup(function(evt){
-	linemode = false;
-	if (smode){
-		var x = evt.pageX - $('#myCanvas').offset().left;
-		var y = evt.pageY - $('#myCanvas').offset().top;
-		rc.rectangle(sx, sy, Math.abs(x-sx), Math.abs(y-sy), {bowing: 1, roughness: 2});
-	}
-	if (cmode){
-		var x = evt.pageX - $('#myCanvas').offset().left;
-		var y = evt.pageY - $('#myCanvas').offset().top;
-		rc.ellipse(sx, sy, Math.abs(x-sx)*2, Math.abs(y-sy)*2);
-	}
-	updatewb();
-})
-$('body').keydown(function(evt){ //67
-	if(evt.which == 83){
-		smode = true;
-	}
-	if(evt.which == 67){
-		cmode = true;
-	}
-})
-$('body').keyup(function(evt){
-	if(evt.which == 83){
-		smode = false;
-	}
-	if(evt.which == 67){
-		cmode = false;
-	}
-})
+   var ref = firebase.database().ref('wb');
+   var canvas = document.getElementById('myCanvas');
+   $( "#dialog" ).dialog({autoOpen: false});
+   function reset2default(){
+   	$('#penColor').val('rgb(0,0,0)')
+   	$('#strokeWidth').val('1')
+   	$('#lineBreaks').val('3')
+   	$('#sroughness').val('2')
+   	$('#sBowing').val('1')
+   }
+   
+   function c(){
+   	ctx.clearRect(0, 0, canvas.width, canvas.height);
+   	updatewb();
+   }
+   
+   function updatewb(){
+   	firebase.database().ref('wb').set(document.getElementById('myCanvas').toDataURL());
+   }
+   
+   function paintgivenBase64(b){
+   	var image = new Image();
+   	image.onload = function() {
+   		ctx.clearRect(0, 0, canvas.width, canvas.height);
+     		ctx.drawImage(image, 0, 0);
+   	};
+   	image.src = b;
+   }
+   
+   
+   
+   ref.on('value', function(snapshot) {
+      paintgivenBase64(snapshot.val());
+   });
+   
+   var ctx = document.getElementById('myCanvas').getContext("2d");
+   const rc = rough.canvas(document.getElementById('myCanvas'));
+   var linemode,smode,cmodesx,sy;
+   linemode = false;
+   smode = false;
+   cmode = false;
+   Math.getDistance = function( x1, y1, x2, y2 ) {
+   	var xs = x2 - x1,ys = y2 - y1;		
+   	xs *= xs;
+   	ys *= ys;
+   	return Math.sqrt( xs + ys );
+   };
+   $('#myCanvas').attr('width',"1200").attr('height',"600")
+   $('#myCanvas').mousedown(function(evt){
+   	if (!smode && !cmode){
+   	linemode = true;
+   	}
+   	sx = evt.pageX - $('#myCanvas').offset().left;
+   	sy = evt.pageY - $('#myCanvas').offset().top;
+   })
+   $('#myCanvas').mousemove(function(evt){
+   	if (linemode && !smode){
+   		var x = evt.pageX - $('#myCanvas').offset().left;
+   		var y = evt.pageY - $('#myCanvas').offset().top;
+   		if (Math.getDistance(sx,sy,x,y) > $('#lineBreaks').val()){
+   			rc.line(x, y, sx, sy,{stroke: $('#penColor').val(),strokeWidth: $('#strokeWidth').val()});
+   			sx = x;
+   			sy = y;
+   		}
+   
+   	}
+   })
+   $('#myCanvas').mouseup(function(evt){
+   	linemode = false;
+   	if (smode){
+   		var x = evt.pageX - $('#myCanvas').offset().left;
+   		var y = evt.pageY - $('#myCanvas').offset().top;
+   		var deltax = Math.abs(x-sx);
+   		var deltay = Math.abs(y-sy);
+   		rc.rectangle(Math.min(sx,x),Math.min(sy,y),deltax,deltay ,{bowing: $('#sBowing').val(), roughness: $('#sroughness').val(),stroke: $('#penColor').val(),strokeWidth: $('#strokeWidth').val()});
+   	}
+   	if (cmode){
+   		var x = evt.pageX - $('#myCanvas').offset().left;
+   		var y = evt.pageY - $('#myCanvas').offset().top;
+   		rc.circle(sx, sy, Math.getDistance(sx,sy,x,y)*2,{stroke: $('#penColor').val(),strokeWidth: $('#strokeWidth').val()});
+   	}
+   	updatewb();
+   })
+   $('body').keydown(function(evt){ //67
+   	if(evt.which == 83){
+   		$( ":text" ).blur();
+   		smode = true;
+   	}
+   	if(evt.which == 67){
+   		$( ":text" ).blur();
+   		cmode = true;
+   	}
+   	if (evt.which == 13){
+   		$( ":text" ).blur();
+   	}
+   })
+   $('body').keyup(function(evt){
+   	if(evt.which == 83){
+   		smode = false;
+   	}
+   	if(evt.which == 67){
+   		cmode = false;
+   	}
+   	if(evt.which == 79){
+   		if (!$( "#dialog" ).dialog("isOpen")){
+   		$("#dialog").dialog( "open" );		
+   	}
+   	}
+   })
 </script>
