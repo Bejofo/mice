@@ -1,0 +1,198 @@
+<style>
+.center {
+    margin: auto;
+    width: 60%;
+    padding: 10px;
+}
+.pinput {
+    margin: auto;
+    width: 100%;
+    height: 50%;
+}
+</style>
+<div class="center">
+<h1><a href="https://esolangs.org/wiki/DOGO">DOGO</a> interpreter</h1>
+<textarea class ="pinput" type = 'text'></textarea>
+<button onclick ="buttonclick();">Run</button>
+<button onclick ="loadexample();">Load Example</button>
+<button onclick = "document.getElementsByClassName('pinput')[0].value ='';">Clear</button>
+<h2>Results:</h2>
+<p id = 'r'></p>
+</div>
+<script>
+function loadexample(){
+	document.getElementsByClassName("pinput")[0].value = "roll-over roll-over heel roll-over roll-over roll-over roll-over heel heel heel heel heel heel heel heel heel sit roll-over roll-over roll-over heel roll-over roll-over roll-over heel heel heel heel heel heel heel heel roll-over roll-over heel roll-over roll-over roll-over roll-over roll-over heel roll-over roll-over roll-over roll-over roll-over stay roll-over roll-over roll-over heel roll-over roll-over heel roll-over roll-over roll-over heel roll-over roll-over roll-over roll-over heel heel heel heel heel heel heel sit roll-over roll-over roll-over heel roll-over roll-over roll-over heel heel heel heel roll-over roll-over heel roll-over roll-over roll-over roll-over roll-over heel roll-over roll-over roll-over roll-over roll-over stay roll-over roll-over roll-over heel roll-over roll-over roll-over heel roll-over roll-over roll-over roll-over roll-over heel roll-over heel heel heel heel heel heel heel roll-over roll-over roll-over roll-over roll-over heel heel roll-over heel heel heel roll-over roll-over roll-over roll-over roll-over heel roll-over roll-over roll-over heel heel heel roll-over roll-over roll-over roll-over heel heel heel heel heel heel heel heel sit roll-over roll-over roll-over heel roll-over roll-over roll-over heel heel heel heel roll-over roll-over heel roll-over roll-over roll-over roll-over roll-over heel roll-over roll-over roll-over roll-over roll-over stay roll-over roll-over roll-over heel roll-over roll-over heel roll-over roll-over roll-over heel heel heel roll-over roll-over roll-over roll-over heel heel heel heel heel heel heel heel heel heel sit roll-over roll-over roll-over heel roll-over roll-over roll-over heel heel heel heel heel heel heel heel heel roll-over roll-over heel roll-over roll-over roll-over roll-over roll-over heel roll-over roll-over roll-over roll-over roll-over stay roll-over roll-over roll-over heel roll-over roll-over roll-over roll-over heel heel heel roll-over roll-over roll-over roll-over heel roll-over roll-over roll-over roll-over heel heel heel heel roll-over roll-over heel roll-over heel heel heel roll-over roll-over roll-over roll-over roll-over heel roll-over roll-over heel heel heel heel heel heel roll-over roll-over roll-over roll-over heel roll-over roll-over heel heel heel heel heel heel heel heel roll-over roll-over roll-over roll-over heel roll-over roll-over roll-over heel heel roll-over roll-over roll-over roll-over heel roll-over roll-over roll-over roll-over roll-over heel"
+}
+function buttonclick(){
+	document.getElementById("r").innerHTML = run(DOGO2BF(document.getElementsByClassName("pinput")[0].value.toUpperCase().replace(/(\r\n\t|\n|\r\t)/gm,"")));
+}
+function DOGO2BF(dogoCode){
+	var bfcode = '';
+	var dogo = dogoCode.split(' ');
+	var opcode = 0;
+	for (var i = 0; i < dogo.length;i++){
+		switch(dogo[i]){
+			case 'SIT':
+				bfcode += '[';
+				break;
+			case 'STAY':
+				bfcode += ']'
+				break;
+			case 'ROLL-OVER':
+				opcode = opcode == 5 ? 0 : opcode + 1;
+				break;
+			case 'HEEL':
+				switch(opcode){
+					case 0:
+						bfcode += '+'
+						break;
+					case 1:
+						bfcode += '-'
+						break;
+					case 2:
+						bfcode += '>'
+						break;
+					case 3:
+						bfcode += '<'
+						break;
+					case 4:
+						bfcode += ','
+						break;
+					case 5:
+						bfcode += '.'
+						break;
+				}
+				break;
+		}
+	}
+	return bfcode;
+}
+
+var parse = (function () {
+  var input;
+  var output;
+  var data;
+  var ptr;
+  var debug = false;
+  var ops = {
+    '+': function () {
+      data[ptr] = data[ptr] || 0;
+      data[ptr]++;
+      debug && console.log('+', data[ptr], ptr);
+    },
+
+    '-': function () {
+      data[ptr] = data[ptr] || 0;
+      data[ptr]--;
+      debug && console.log('-', data[ptr], ptr);
+    },
+
+    '<': function () {
+      ptr--;
+      if (ptr < 0) {
+        ptr = 0; //Don't allow pointer to leave data array
+      }
+      debug && console.log('<', ptr);
+    },
+
+    '>': function () {
+      ptr++;
+      debug && console.log('>', ptr);
+    },
+
+    '.': function () {
+      var c = String.fromCharCode(data[ptr]);
+      output.push(c);
+      debug && console.log('.', c, data[ptr]);
+    },
+
+    ',': function () {
+      var c = input.shift();
+      if (typeof c == "string") {
+        data[ptr] = c.charCodeAt(0);
+      }
+      debug && console.log(',', c, data[ptr]);
+    },
+  };
+  function program(nodes) {
+    return function (inputString) {
+      output = [];
+      data = [];
+      ptr = 0;
+
+      input = inputString && inputString.split('') || [];
+
+      nodes.forEach(function (node) {
+        node();
+      });
+
+      return output.join('');
+    }
+  }
+  function loop(nodes) {
+    return function () {
+      var loopCounter = 0;
+
+      while(data[ptr] > 0) {
+        if (loopCounter++ > 10000) { throw "Infinite loop detected"; }
+
+        nodes.forEach(function (node) {
+          node();
+        });
+      }
+    };
+  }
+  var programChars;
+
+  function parseProgram() {
+    var nodes = [];
+    var nextChar;
+
+    while (programChars.length > 0) {
+      nextChar = programChars.shift();
+      if (ops[nextChar]) {
+        nodes.push(ops[nextChar]);
+      } else if (nextChar == '[') {
+        nodes.push(parseLoop());
+      } else if (nextChar == ']') {
+        throw "Missing opening bracket";
+      } else {
+        // ignore it
+      }
+    }
+
+    return program(nodes);
+  }
+
+  function parseLoop() {
+    var nodes = [];
+    var nextChar;
+
+    while (programChars[0] != ']') {
+      nextChar = programChars.shift();
+      if (nextChar == undefined) {
+        throw "Missing closing bracket";
+      } else if (ops[nextChar]) {
+        nodes.push(ops[nextChar]);
+      } else if (nextChar == '[') {
+        nodes.push(parseLoop());
+      } else {
+        // ignore it
+      }
+    }
+    programChars.shift(); //discard ']'
+
+    return loop(nodes);
+  }
+
+  function parse(str) {
+    programChars = str.split('');
+    return parseProgram();
+  }
+
+  return parse;
+})();
+function run(code, input) {
+  return parse(code)(input);
+}
+</script>
