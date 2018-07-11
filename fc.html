@@ -1,0 +1,71 @@
+
+<title>Temperature Converter</title>
+<div style=" margin: auto;width: 42%;height: auto;padding: 10px;"><h1>
+	Temperature Converter with <a href="https://xkcd.com/1923/">Felsius</a>
+</h1></div>
+<div style=" margin: auto;width: 42%;height: 80%;padding: 10px;display: flex; justify-content: space-between;">
+<div>
+<input type="text" id="1" onkeyup="convert(1)">
+</div>
+<div>
+<select id="c1" onchange="c(1)">
+    <option value="f">Fahrenheit</option>
+    <option selected value="c">Celsius</option>
+    <option value="k">Kelvin</option>
+    <option value="fc">Felsius</option>
+</select>
+</div>
+<div>
+ =
+</div>
+<div>
+<input type="text" id ="2" onkeyup="convert(2)">
+</div>
+<div>
+<select id="c2" onchange="c(2)">
+    <option value="f">Fahrenheit</option>
+    <option value="c">Celsius</option>
+    <option value="k">Kelvin</option>
+    <option selected value="fc">Felsius</option>
+</select>
+</div>
+</div>
+<script>
+function convert(id){
+	var end;
+	var reverseId = id == 1 ? 2 : 1;
+	var toConvert = Number(document.getElementById(id).value);
+	switch(document.getElementById('c'+id).value){
+		case 'f':
+			toConvert = (toConvert - 32) * 5/9;
+			break;
+		case 'k':
+			toConvert -= 273.15;
+			break;
+		case 'fc': 
+			toConvert *= 5;
+			toConvert -= 80;
+			toConvert /= 7;
+			break;
+	}
+	switch(document.getElementById('c'+reverseId).value){
+		case 'f':
+			document.getElementById(reverseId).value = (toConvert * 1.8) +32 ;
+			break;
+		case 'k':
+			document.getElementById(reverseId).value = toConvert + 273.15;
+			break;
+		case 'fc': 
+			document.getElementById(reverseId).value = ((toConvert * 7) /5) + 16
+			break;
+		case 'c':
+			document.getElementById(reverseId).value = toConvert;
+			break;
+	}
+
+	}
+function c(id){
+	var reverseId = id == 1 ? 2 : 1;
+	convert(reverseId);
+}
+</script>
