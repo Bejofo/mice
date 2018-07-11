@@ -5,6 +5,13 @@
    input#strokeWidth ,#lineBreaks,#sroughness,#sBowing{
    width: 60px
    }
+   .center {
+    margin: auto;
+    width: 80%;
+    height: 80%;
+    border: 3px solid #000000;
+    padding: 10px;
+}
 </style>
 <div id="dialog" title="Options">
    Color: <input type="text" id ="penColor" value ="rgb(0,0,0)"><br>
@@ -16,13 +23,20 @@
    <button onclick="reset2default()">Reset to default</button>
 </div>
 <title>DOGO</title>
+<div class = "center" id="cc">
 <canvas id="myCanvas"></canvas>
+</div>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src = "https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src = "https://cdn.rawgit.com/pshihn/rough/master/dist/rough.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
+   var lastBase = '';
+   window.addEventListener('resize', function(){
+      $('#myCanvas').attr('width',$('#cc').width()).attr('height',$('#cc').height());
+      paintgivenBase64(lastBase);
+   }, false);
    // Initialize Firebase
    var config = {
      apiKey: "AIzaSyAiZgYhoy51G5o3MsB66eglg3E3mWOghp4",
@@ -56,6 +70,7 @@
    }
    
    function paintgivenBase64(b){
+      lastBase = b;
    	var image = new Image();
    	image.onload = function() {
    		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -82,7 +97,7 @@
    	ys *= ys;
    	return Math.sqrt( xs + ys );
    };
-   $('#myCanvas').attr('width',"1200").attr('height',"600")
+   $('#myCanvas').attr('width',$('#cc').width()).attr('height',$('#cc').height())
    $('#myCanvas').mousedown(function(evt){
    	if (!smode && !cmode){
    	linemode = true;
