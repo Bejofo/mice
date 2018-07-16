@@ -1,19 +1,69 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>rot.js Tutorial Roguelike</title>
-  </head>
-  <style>
-  canvas {
-    padding-left: 0;
-    padding-right: 0;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-}
-  </style>
-  <body>
-    <script src="./rot.js"></script>
-    <script src="./rlmon.js"></script>
-  </body>
-</html>
+<div id="container">
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="scripts/rot.js"></script>
+<script src="scripts/levelgen.js"></script>
+<script src="scripts/content.js"></script>
+<script>
+	var tileSet = document.createElement("img");
+	tileSet.src = "graphics/tiles2.png";
+	var options = {
+		layout: "tile",
+		bg: "black",
+		tileWidth: 16,
+		tileHeight: 16,
+		tileSet: tileSet,
+		tileMap: {
+			"#": [12 * 4, 0], //wall
+			"+": [12 * 16, 0], //door
+			"-": [12 * 17, 0], //opened door
+			"@": [0, 12 * 4]
+		},
+    tileColorize: true,
+		width: 59, // Height index is 58
+		height: 36 // Height index is 35
+	}
+	var display = new ROT.Display(options);
+	document.getElementById("container").appendChild(display.getContainer());
+	$('#container').css('display', 'flex').css('justify-content', 'center');
+	$('canvas').click(function(e) {
+		console.log(display.eventToPosition(e));
+	})
+	tileSet.onload = function() {
+		start()
+	};
+
+	function start() {
+		var stage = new Level(1234, 60, 36);
+		player = {
+			coordinates: [stage.spawnPoint[0], stage.spawnPoint[1]],
+      move: function(x,y){
+        if (!stage.map[this.coordinates[0] + x][this.coordinates[1] + y].solid){
+        this.coordinates[0] += x;
+        this.coordinates[1] += y;
+        stage.draw();
+      } else if (stage.map[this.coordinates[0] + x][this.coordinates[1] + y].id == 'cdoor'){
+        stage.map[this.coordinates[0] + x][this.coordinates[1] + y] = content.Terrain.odoor;
+        stage.draw();
+      }
+      }
+		};
+		stage.draw();
+		$(document).keydown(function(e) {
+			switch (e.which) {
+				case ROT.VK_UP:
+					player.move(0,-1);
+					break;
+				case ROT.VK_DOWN:
+					player.move(0,1)
+					break;
+				case ROT.VK_LEFT:
+					player.move(-1,0)
+					break;
+				case ROT.VK_RIGHT:
+					player.move(1,0)
+					break;
+			}
+		})
+	}
+</script>
