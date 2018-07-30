@@ -1,0 +1,53 @@
+<div style=" margin: auto;width: 42%;height: auto;padding: 10px;">
+Really bad music generator. Plays for around 16 seconds<br>
+<button onclick="playChannel(generateChannel(),0);playChannel(generateChannel(),65);playChannel(generateChannel(),200);">Torture me</button>
+</div>
+<script src="https://chancejs.com/chance.min.js" charset="utf-8"></script>
+<script src="https://galactic.ink/midi-js/inc/shim/Base64.js" charset="utf-8"></script>
+<script src="https://galactic.ink/midi-js/inc/shim/Base64binary.js" charset="utf-8"></script>
+<script src="https://cdn.rawgit.com/mudcube/MIDI.js/master/build/MIDI.min.js" charset="utf-8"></script>
+<script>
+var rng = new Chance(12345);
+window.onload = function () {
+	MIDI.loadPlugin({
+		soundfontUrl: "https://galactic.ink/midi-js/soundfont/",
+		instrument: "acoustic_grand_piano",
+		onprogress: function(state, progress) {
+			console.log(state, progress);
+		},
+		onsuccess: function() {
+			console.log('Done');
+		}
+	});
+};
+
+function generateNote(pos,remainingLength){ // 1 unit of time =  1/16 note
+	var duration = chance.integer({min: 1, max: Math.min(16,remainingLength)});
+	var pitch = chance.integer({min: 36, max: 59});
+	return {s:pos,d:duration,p:pitch,c:null};
+}
+
+function generateChannel(){
+	var rl = 64;
+	var pos = 0;
+	var c = new Array();
+	while(rl > 0){
+		var note = generateNote(pos,rl);
+		pos += note.d
+		rl -= note.d
+		c.push(note);
+	}
+	return c;
+}
+// playChannel(generateChannel(),0);playChannel(generateChannel(),65);
+function playChannel(c,offset){
+	for(var i = 0; i < c.length;i++){
+		playNote(i+offset,c[i].p,100,c[i].s,c[i].d);
+	}
+}
+
+function playNote(channel,note,volume,delay,duration){
+	MIDI.noteOn(0, note, volume, delay/4);
+	MIDI.noteOff(0, note,volume ,delay/4 + duration/4);
+}
+</script>
