@@ -9,7 +9,6 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-
 <div class="container">
   <h2>Stuff I made</h2><p>Not really, I definitely copied some code.</p>
   <div class="list-group">
@@ -43,6 +42,12 @@
     </a>
   </div>
 </div>
-
+<script>
+  var splash = atob('ZG9udF9jdXRfdGhlX3JlZF93aXJlfGp1c3RfZG9faXR8dW5kZXJfY29uc3RydWN0aW9ufGNvbWluZ19zb29ufGluc2VydF9zcGxhc2hfdGV4dF9oZXJlfG51bGx8dW5kZ\
+  WZpbmVkfFNPTUVCT0RZX09OQ0VfVE9MRF9NRXxvb29mfEVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRXxZRUVFRUVFVHxGfHVzc3IucG5nfFlBTExfTkVFRF9KRVNVU3xtaXN0YWtlc19oYXZlX2\
+  JlZW5fbWFkZXxTT1lVWl9ORVJVU0hJTVk').split('|');
+  location.hash = splash[Math.floor(Math.random() * splash.length)];
+  var splash = null;
+</script>
 </body>
 </html>

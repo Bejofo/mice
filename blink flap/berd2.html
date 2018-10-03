@@ -1,0 +1,63 @@
+<body style='margin:0'>
+    <script>
+    var flap = () =>{
+      v < 0?v-=5:v-=6;
+      v > 1.7?v-=1:v+=0;
+    }
+    var y = 180,
+        x = v = n = s = 0,
+        f = 140,
+        c = document.createElement('canvas'),
+        p = c.getContext('2d');
+    c.width = 280;
+    c.height = 400;
+    c.onclick = flap;
+    c.style = 'width:68vh;height:97vh';
+    document.body.appendChild(c);
+    p.font = "50px Arial";
+    p.shadowColor = '#444';
+    p.shadowBlur = 9;
+    p.shadowOffsetX = p.shadowOffsetY = 5;
+
+    function r(h, t, k = 0, i = '#0f0', j = '#0a0', u = 0, l = 0, w = 40) {
+        var g = p.createLinearGradient(h, l, h + 40, u);
+        g.addColorStop(0, i);
+        g.addColorStop(1, j);
+        p.fillStyle = g;
+        p.fillRect(h, k, w, t);
+    }
+    b = setInterval(function() {
+        if (x == 0) {
+            n = f;
+            f = Math.floor(280 * Math.random());
+        }
+        x = x == 0 ? 159 : x - 1;
+        v += .1;
+        y += v;
+        r(0, 400, 0, '#08c', '#0cf', 280, 0, 280);
+        r(20, 40, y, '#ff0', '#fa0', y + 40, y);
+        r(x - 40, n);
+        r(x - 50, 20, n - 20, '#0f0', '#0a0', n + 20, n, 60);
+        r(x + 120, f);
+        r(x + 110, 20, f - 20, '#0f0', '#0a0', f + 20, f, 60);
+        r(x - 40, 280 - n, n + 120);
+        r(x - 50, 20, n + 120, '#0f0', '#0a0', n + 140, n + 100, 60);
+        r(x + 120, 280 - f, f + 120);
+        r(x + 110, 20, f + 120, '#0f0', '#0a0', f + 140, f + 100, 60);
+        if (x == 60) {
+            s++;
+        }
+        p.fillStyle = '#fff';
+        p.fillText(s, 120, 80);
+        if (x > 20 && x < 100 && (y < n - 40 || y > n + 120) || y < 0 || y > 360) {
+            clearInterval(b);
+            location.reload();
+        }
+    }, 15);
+    if (window.addEventListener) {
+window.addEventListener("message", flap);
+}
+else {
+window.attachEvent("onmessage", flap);
+}</script> <!--  <br>Made by Thomas Kaldahl-->
+</body>

@@ -1,0 +1,71 @@
+<style>
+#camera
+{
+    transform: rotateY(180deg);
+    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+    -moz-transform:rotateY(180deg); /* Firefox */
+    display:none
+}
+</style>
+<iframe src="berd2.html" id="berd" width="300" height="400"></iframe>
+<video id="camera" width="400" height="300" ></video>
+<br>
+<canvas id="mycanvas" width="400" height="100"></canvas>
+<button onclick="start()">Start</button>
+<script src="https://www.auduno.com/clmtrackr/build/clmtrackr.js"></script>
+<script src="https://cdn.rawgit.com/joewalnes/smoothie/master/smoothie.js">
+</script>
+<script>
+var lastBlink = new Date().getTime() + 50;
+var smoothie = new SmoothieChart({millisPerPixel:20});
+smoothie.streamTo(document.getElementById("mycanvas"));
+var Threshold = 0.725
+var ThresholdMarker = new TimeSeries();
+var EyeLevel = new TimeSeries();
+var Velocity = new TimeSeries();
+var Accuracy = new TimeSeries();
+smoothie.addTimeSeries(Velocity,{strokeStyle:'#00ff00'});
+smoothie.addTimeSeries(ThresholdMarker,{strokeStyle:'#ff0000'});
+smoothie.addTimeSeries(Accuracy,{strokeStyle:'#ffffff'});
+function getVelocity(a){
+	if (EyeLevel.data.length < 3 || ctracker.getScore() < 0.55){
+		return 0;
+	} else {
+		var Vel = EyeLevel.data[EyeLevel.data.length-2][1] - a;
+		return Vel < 0 ?  Math.min(Math.abs(Vel),1.4) : 0;
+	}
+}
+function iteration(p){
+	var time = new Date().getTime();
+	var avg = (p[24][1] + p[29][1])/2;
+  EyeLevel.append(time, avg);
+	var vel = getVelocity(avg);
+	Velocity.append(time,vel);
+	ThresholdMarker.append(time,Threshold);
+	Accuracy.append(time,ctracker.getScore());
+	if (vel > Threshold && lastBlink + 400 < time){
+		lastBlink = time;
+		document.getElementById('berd').contentWindow.postMessage('blink', '*');
+    console.log(time);
+	}
+}
+var ctracker = new clm.tracker();
+function start(){
+navigator.mediaDevices.getUserMedia({ audio: false, video: true })
+	.then(function(stream) {
+		document.getElementById("camera").srcObject  = stream;
+		document.getElementById("camera").play();
+		ctracker.init();
+		ctracker.start(document.getElementById("camera"));
+	})
+	.catch(function(err) {
+  alert(JSON.stringify(err));
+});
+	function positionLoop() {
+    requestAnimationFrame(positionLoop);
+    var positions = ctracker.getCurrentPosition();
+		iteration(positions);
+  }
+  positionLoop();
+}
+</script>

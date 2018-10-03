@@ -1,0 +1,70 @@
+<style>
+#camera
+{
+    transform: rotateY(180deg);
+    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+    -moz-transform:rotateY(180deg); /* Firefox */
+    display:none
+}
+</style>
+<video id="camera" width="400" height="300" ></video>
+<br>
+<canvas id="mycanvas" width="400" height="100"></canvas>
+<button onclick="start()">Start</button>
+<script src="https://www.auduno.com/clmtrackr/build/clmtrackr.js"></script>
+<script src="https://cdn.rawgit.com/joewalnes/smoothie/master/smoothie.js">
+</script>
+<script>
+var blinkTimeStamps = [];
+var lastBlink = new Date().getTime() + 50;
+var smoothie = new SmoothieChart({millisPerPixel:20});
+var Threshold = 0.725
+var ThresholdMarker = new TimeSeries();
+var EyeLevel = new TimeSeries();
+var Velocity = new TimeSeries();
+var Accuracy = new TimeSeries();
+smoothie.addTimeSeries(Velocity,{strokeStyle:'#00ff00'});
+smoothie.addTimeSeries(ThresholdMarker,{strokeStyle:'#ff0000'});
+smoothie.addTimeSeries(Accuracy,{strokeStyle:'#ffffff'});
+function getVelocity(a){
+	if (EyeLevel.data.length < 3 || ctracker.getScore() < 0.55){
+		return 0;
+	} else {
+		var Vel = EyeLevel.data[EyeLevel.data.length-2][1] - a;
+		return Vel < 0 ?  Math.min(Math.abs(Vel),1.4) : 0;
+	}
+}
+function iteration(p){
+	var time = new Date().getTime();
+	var avg = (p[24][1] + p[29][1])/2;
+  EyeLevel.append(time, avg);
+	var vel = getVelocity(avg);
+	Velocity.append(time,vel);
+	ThresholdMarker.append(time,Threshold);
+	Accuracy.append(time,ctracker.getScore());
+	if (vel > Threshold && lastBlink + 200 < time){
+		lastBlink = time;
+    console.log(time);
+    blinkTimeStamps.push(time);
+    if(blinkTimeStamps.length >= 3){
+      if(blinkTimeStamps[blinkTimeStamps.length-1] - blinkTimeStamps[blinkTimeStamps.length-2] < 450){
+        document.body.style.backgroundColor == "black"?document.body.style.backgroundColor = "white":document.body.style.backgroundColor = "black";
+        blinkTimeStamps.shift();
+      }
+    }
+	}
+}
+var ctracker = new clm.tracker();
+function start(){
+navigator.mediaDevices.getUserMedia({ audio: false, video: true })
+	.then(function(stream) {
+		document.getElementById("camera").srcObject  = stream;
+		document.getElementById("camera").play();
+		ctracker.init();
+		ctracker.start(document.getElementById("camera"));
+	})
+	.catch(function(err) {
+  alert(JSON.stringify(err));
+});
+}
+</script>
