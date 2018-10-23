@@ -1,17 +1,72 @@
-// ------------- Time functions --------------------
-function th() {
-  var d = new Date();
-  return d.getHours();
+// ------------- Time functions -------------------- 
+var timeTable = [
+  {
+    name:"Period 1",
+    min:"7:45",
+    max:"9:5"
+  },{
+    name:"BREAK",
+    min:"9:5",
+    max:"9:15"
+  },{
+    name:"Period 2",
+    min:"9:15",
+    max:"10:35"
+  },{
+    name:"FLEX",
+    min:"10:35",
+    max:"11:25"
+  },{
+    name:"Period 3",
+    min:"11:25",
+    max:"12:45"
+  },{
+    name:"Period 4",
+    min:"12:50",
+    max:"14:10"
+  },{
+    name:"Period 5",
+    min:"14:15",
+    max:"15:35"
+  }
+]
+/*
+var timeTable = [
+  addTimeSlot(x,y,z),
+  addTimeSlot(x,y,z),
+  addTimeSlot(x,y,z),
+  addTimeSlot(x,y,z),
+  addTimeSlot(x,y,z),
+  addTimeSlot(x,y,z),
+  addTimeSlot(x,y,z),
+  addTimeSlot(x,y,z),
+  addTimeSlot(x,y,z)
+]
+*/
+var currentMin;
+var currentMax;
+function addTimeSlot(x,y,z){
+  return {
+      name:x,
+      min:y,
+      max:z
+  }
 }
-function tm() {
-  var d = new Date();
-  return d.getMinutes();
+function timeStampToSeconds(input){
+  var h = input.split(":")[0];
+  var m = input.split(":")[1];
+  return h*60*60+m*60;
 }
-function ts() {
+function getTimeInSeconds(){
   var d = new Date();
-  return d.getSeconds();
+  var r = d.getSeconds();
+  r+=d.getMinutes()*60;
+  r+= d.getHours()*60*60;
+  return r;
 }
-// --------------------------------------------------
+function isBetween(time,min,max){ // min & max == string
+  return time < timeStampToSeconds(max) && timeStampToSeconds(min) < time;
+}
 function updateBar(p, z) {
   if (p <= 3) {
     document.getElementById(z).style = "width:" + 5 + "%";
@@ -22,61 +77,19 @@ function updateBar(p, z) {
   }
 }
 function getPeriod() {
-  if (timeToSecs(7, 45, 0) <= timeToSecs(th(), tm(), ts()) && timeToSecs(th(), tm(), ts()) <= timeToSecs(9, 5, 0)) { return 1; }
-  if (timeToSecs(9, 15, 0) <= timeToSecs(th(), tm(), ts()) && timeToSecs(th(), tm(), ts()) <= timeToSecs(10, 35, 0)) { return 2; }
-  if (timeToSecs(11, 25, 0) <= timeToSecs(th(), tm(), ts()) && timeToSecs(th(), tm(), ts()) <= timeToSecs(12, 45, 0)) { return 3; }
-  if (timeToSecs(12, 50, 0) <= timeToSecs(th(), tm(), ts()) && timeToSecs(th(), tm(), ts()) <= timeToSecs(14, 10, 0)) { return 4; }
-  if (timeToSecs(14, 15, 0) <= timeToSecs(th(), tm(), ts()) && timeToSecs(th(), tm(), ts()) <= timeToSecs(15, 35, 0)) { return 5; }
-  return 0;
+  var t = getTimeInSeconds();
+  var r = timeTable.filter(x => isBetween(t,x.min,x.max))[0];
+  currentMin = timeStampToSeconds(r.min);
+  currentMax = timeStampToSeconds(r.max);
+  return r.name;
 }
-function timeToSecs(a, b, c) {
-  var a = a * 60 * 60;
-  var b = b * 60;
-  return a + b + c;
-}
-function partOfClass(wc) {
-  if (wc == 1) {
-    return (timeToSecs(th(), tm(), ts()) - timeToSecs(7, 45, 0)) / 4800
-  }
-  if (wc == 2) {
-    return (timeToSecs(th(), tm(), ts()) - timeToSecs(9, 15, 0)) / 4800
-  }
-  if (wc == 3) {
-    return (timeToSecs(th(), tm(), ts()) - timeToSecs(11, 25, 0)) / 4800
-  }
-  if (wc == 4) {
-    return (timeToSecs(th(), tm(), ts()) - timeToSecs(12, 50, 0)) / 4800
-  }
-  if (wc == 5) {
-    return (timeToSecs(th(), tm(), ts()) - timeToSecs(14, 15, 0)) / 4800
-  }
-  if (wc == 0) {
-    return 1;
-  }
+
+function percentOfClass() {
+  return (getTimeInSeconds()-currentMin)/(currentMax-currentMin);
 }
 function update() {
-  updateBar(partOfClass(getPeriod()) * 100, 1);
+  var p = getPeriod();
+  updateBar(percentOfClass()*100, 1);
+  document.getElementById('t').innerHTML = p;
 }
-setInterval(function () { update() }, 1000);
-console.log("It is now period:" + getPeriod());
-/*
-th(){
-var d = new Date();
-return d.getHours();
-}
-tm(){
-var d = new Date();
-return d.getMinutes();
-}
-ts(){
-var d = new Date();
-return d.getSeconds();
-}
-time = timeToSecs(th(),tm(),ts())
--------------------------------------------------------------------------
-Period 1 = 7:45-9:05 = if(timeToSecs(7,45,0)<=time&&time<=timeToSecs(9,5,0)){return 1;}
-Period 2 = 9:15-10:35 = if(timeToSecs(9,15,0)<=time&&time<=timeToSecs(10,35,0)){return 2;}
-Period 3 = 11:25-12:45 = if(timeToSecs(11,25,0)<=time&&time<=timeToSecs(12,45,0)){return 3;}
-Period 4 = 12:50-14:10 = if(timeToSecs(12,50,0)<=time&&time<=timeToSecs(14,10,0)){return 4;}
-Period 5 = 14:15-15:35 = if(timeToSecs(14,15,0)<=time&&time<=timeToSecs(15,35,0)){return 5;}
-*/
+setInterval(update, 1000);
