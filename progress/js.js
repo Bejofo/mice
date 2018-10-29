@@ -3,7 +3,7 @@ var timeTable = [
   addTimeSlot("Break","9:5","9:15"),
   addTimeSlot("Period 2","9:15","10:35"),
   addTimeSlot("Flex","10:35","11:25"),
-  addTimeSlot("Period 3","11:25","12.45"),
+  addTimeSlot("Period 3","11:25","12:45"),
   addTimeSlot("Period 4","12:50","14:10"),
   addTimeSlot("Period 5","14:15","15:35")
 ];
