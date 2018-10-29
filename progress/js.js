@@ -1,7 +1,7 @@
 // ------------- Time functions -------------------- 
-var timeTable = [
+/*var timeTable = [
   {
-    name:"Period 1",
+    name:"Period 01",
     min:"7:45",
     max:"9:5"
   },{
@@ -30,19 +30,16 @@ var timeTable = [
     max:"15:35"
   }
 ]
-/*
-var timeTable = [
-  addTimeSlot(x,y,z),
-  addTimeSlot(x,y,z),
-  addTimeSlot(x,y,z),
-  addTimeSlot(x,y,z),
-  addTimeSlot(x,y,z),
-  addTimeSlot(x,y,z),
-  addTimeSlot(x,y,z),
-  addTimeSlot(x,y,z),
-  addTimeSlot(x,y,z)
-]
 */
+var timeTable = [
+  addTimeSlot("Period 1","7:45","9:5"),
+  addTimeSlot("Break","9:5","9:15"),
+  addTimeSlot("Period 2","9:15","10:35"),
+  addTimeSlot("Flex","10:35","11:25"),
+  addTimeSlot("Period 3","11:25","12.45"),
+  addTimeSlot("Period 4","12:50","14:10"),
+  addTimeSlot("Period 5","14:15","15:35")
+];
 var currentMin;
 var currentMax;
 function addTimeSlot(x,y,z){
