@@ -1,36 +1,3 @@
-// ------------- Time functions -------------------- 
-/*var timeTable = [
-  {
-    name:"Period 01",
-    min:"7:45",
-    max:"9:5"
-  },{
-    name:"BREAK",
-    min:"9:5",
-    max:"9:15"
-  },{
-    name:"Period 2",
-    min:"9:15",
-    max:"10:35"
-  },{
-    name:"FLEX",
-    min:"10:35",
-    max:"11:25"
-  },{
-    name:"Period 3",
-    min:"11:25",
-    max:"12:45"
-  },{
-    name:"Period 4",
-    min:"12:50",
-    max:"14:10"
-  },{
-    name:"Period 5",
-    min:"14:15",
-    max:"15:35"
-  }
-]
-*/
 var timeTable = [
   addTimeSlot("Period 1","7:45","9:5"),
   addTimeSlot("Break","9:5","9:15"),
