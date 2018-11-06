@@ -1,0 +1,27 @@
+<input type="text" id="in">
+<p id="out"></p>
+<script>
+    var out = document.getElementById("out");
+    var ind = document.getElementById("in");
+    var WS = new WebSocket("wss://wsninjaisdown.herokuapp.com");
+    WS.onopen = function (event) {
+        console.log("WebSocket is open now.");
+        out.innerHTML += `<span style="color:green">WS Open</span> <br>`;
+    };
+    WS.onmessage = function (event) {
+        out.innerHTML += event.data + '<br>';
+    };
+    WS.onerror = function (event) {
+        out.innerHTML += `<span style="color:red">Error:${event}</span> <br>`;
+    };
+    WS.onclose = function(event) {
+        out.innerHTML += `<span style="color:red">Websocket closed</span> <br>`
+    };
+    ind.addEventListener("keyup", function (event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            WS.send(ind.value);
+            ind.value = '';
+        }
+    });
+</script>
