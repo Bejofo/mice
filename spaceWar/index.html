@@ -32,8 +32,6 @@
         gravity_constant: 6.6E-11,
     }
     var bullets = [];
-    window.onkeyup = function (e) { p1.keys[e.code] = false; }
-    window.onkeydown = function (e) { p1.keys[e.code] = true; }
     var WS = new WebSocket("wss://wsninjaisdown.herokuapp.com");
     WS.onopen = function (event) {
         document.getElementById('info').innerHTML = `<button onclick="startBoth()">Start</button>`
@@ -113,8 +111,11 @@
         });
     }
     function start() {
+
         p2 = new Player(250, 400, 0, 0, Math.PI / 2, '1')
         p1 = new Player(250, 100, 0, 0, Math.PI * 1.5, '2')
+        window.onkeyup = function (e) { p1.keys[e.code] = false; }
+        window.onkeydown = function (e) { p1.keys[e.code] = true; }
         bullets = [];
         game = setInterval(update, 5)
     }
@@ -122,6 +123,8 @@
         WS.send('s')
         p1 = new Player(250, 400, 0, 0, Math.PI / 2, '1')
         p2 = new Player(250, 100, 0, 0, Math.PI * 1.5, '2')
+        window.onkeyup = function (e) { p1.keys[e.code] = false; }
+        window.onkeydown = function (e) { p1.keys[e.code] = true; }
         bullets = [];
         game = setInterval(update, 5)
     }
