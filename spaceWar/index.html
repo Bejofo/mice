@@ -1,0 +1,128 @@
+<style>
+    #w {
+        text-align: center;
+    }
+
+    #d {
+        outline-style: dotted;
+    }
+
+    button {
+        border: solid;
+        background: #ffffff;
+        border-width: thin;
+    }
+</style>
+<div id="w">
+    <canvas id='d' width="500" height="500"></canvas>
+    <p id='info'></p>
+</div>
+<script src="base.js"></script>
+<script>
+    var options = {
+        starsmass: 7e10,
+        player_mass: 5,
+        player_accel: 0.0025,
+        starradius: 4,
+        turn_speed: 0.02,
+        bullet_radius: 1.5,
+        bullet_mass: 1,
+        bulletspeed: 0.5,
+        r_multipler: 1,
+        gravity_constant: 6.6E-11,
+    }
+    var bullets = [];
+    window.onkeyup = function (e) { p1.keys[e.code] = false; }
+    window.onkeydown = function (e) { p1.keys[e.code] = true; }
+    var WS = new WebSocket("wss://wsninjaisdown.herokuapp.com");
+    WS.onopen = function (event) {
+        document.getElementById('info').innerHTML = `<button onclick="startBoth()">Start</button>`
+    };
+    WS.onmessage = function (event) {
+        if (event.data === 's') {
+            start();
+        } else if (event.data === 'b') {
+            bullets.push(new Bullet(p2));
+        } else {
+            var i = event.data.split(',')
+            p2.x = parseFloat(i[0])
+            p2.y = parseFloat(i[1])
+            p2.xvel = parseFloat(i[2])
+            p2.yvel = parseFloat(i[3])
+            p2.angle = parseFloat(i[4])
+        }
+
+    };
+    var canvas = document.getElementById("d");
+    var ctx = canvas.getContext("2d");
+    function update() {
+        apply_gravity(p1);
+        apply_gravity(p2);
+        p1.move();
+        p2.move();
+        p1.vertexs.forEach(x => {
+            bullets.forEach(b => {
+                if (dist(x.x, x.y, b.x, b.y) < options.bullet_radius) {
+                    die('p1');
+                }
+            })
+            if (dist(x.x, x.y, 250, 250) < options.starradius) {
+                die('p1');
+            }
+        })
+        p2.vertexs.forEach(x => {
+            bullets.forEach(b => {
+                if (dist(x.x, x.y, b.x, b.y) < options.bullet_radius) {
+                    die('p2');
+                }
+            })
+            if (dist(x.x, x.y, 250, 250) < options.starradius) {
+                die('p2');
+            }
+        })
+        bullets.forEach((x, i) => {
+            apply_gravity(x)
+            x.move();
+            if (dist(250, 250, x.x, x.y) < options.starradius + options.bullet_radius || x.x > 500 || x.x < 0 || x.y > 500 || x.y < 0) { // hitting star
+                bullets[i] = null;
+            }
+        });
+        bullets = bullets.filter(x => x !== null);
+        draw();
+        WS.send(`${p1.x},${p1.y},${p1.xvel},${p1.yvel},${p1.angle}`)
+    }
+    function die(x) {
+        clearInterval(game);
+        var winner;
+        if (x === 'p2') {
+            winner = p1
+        } else if (x === 'p1') {
+            winner = p2
+        }
+        document.getElementById('info').innerHTML = `Player ${winner.name} is victorious`
+    }
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        p1.draw();
+        p2.draw();
+        ctx.beginPath();
+        ctx.ellipse(250, 250, options.starradius * 2, options.starradius * 2, Math.PI / 4, 0, 2 * Math.PI);
+        ctx.fill();
+        bullets.forEach(b => {
+            b.draw();
+        });
+    }
+    function start() {
+        p2 = new Player(250, 400, 0, 0, Math.PI / 2, '1')
+        p1 = new Player(250, 100, 0, 0, Math.PI * 1.5, '2')
+        bullets = [];
+        game = setInterval(update, 5)
+    }
+    function startBoth() {
+        WS.send('s')
+        p1 = new Player(250, 400, 0, 0, Math.PI / 2, '1')
+        p2 = new Player(250, 100, 0, 0, Math.PI * 1.5, '2')
+        bullets = [];
+        game = setInterval(update, 5)
+    }
+</script>
