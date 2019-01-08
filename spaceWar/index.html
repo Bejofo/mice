@@ -32,7 +32,7 @@
         gravity_constant: 6.6E-11,
     }
     var bullets = [];
-    var WS = new WebSocket("wss://wsninjaisdown.herokuapp.com");
+    var WS = new WebSocket("ws://s21111179-y380:8080");
     WS.onopen = function (event) {
         document.getElementById('info').innerHTML = `<button onclick="startBoth()">Start</button>`
     };
