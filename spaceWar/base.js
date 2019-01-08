@@ -45,7 +45,7 @@ class Player {
             if(this.coolDown == 0){
                 bullets.push(new Bullet(this));
                 WS.send('b');
-                this.coolDown += 20 // Todo :Remove magic number
+                this.coolDown += 60 // Todo :Remove magic number
             }
         }
         if (this.keys["ArrowLeft"]) {
