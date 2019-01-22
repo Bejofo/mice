@@ -121,6 +121,7 @@
     }
     function startBoth() {
         WS.send('s')
+		document.getElementById('info').innerHTML = "";
         p1 = new Player(250, 400, 0, 0, Math.PI / 2, '1')
         p2 = new Player(250, 100, 0, 0, Math.PI * 1.5, '2')
         window.onkeyup = function (e) { p1.keys[e.code] = false; }
