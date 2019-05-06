@@ -977,6 +977,7 @@
 var alpha = new TimeSeries();
 var beta = new TimeSeries();
 var gamma = new TimeSeries();
+var WS = new WebSocket("wss://wsninjaisdown.herokuapp.com");
 function createTimeline() {
         var chart = new SmoothieChart();
         chart.addTimeSeries(alpha, { strokeStyle: 'rgba(255, 0, 0, 1)', fillStyle: 'rgba(255, 0, 0, 0.2)', lineWidth: 4 });
@@ -987,6 +988,11 @@ function createTimeline() {
       }
 
 function orientation(event){
+if(event.beta > event.gamma){
+	WS.send(0);
+} else {
+	WS.send(1);
+}
   alpha.append(new Date().getTime(), event.alpha);
   beta.append(new Date().getTime(), event.beta);
   gamma.append(new Date().getTime(), event.gamma);
