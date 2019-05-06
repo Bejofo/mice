@@ -1,0 +1,31 @@
+<body onload="createTimeline()">
+
+    <canvas id="chart" width="400" height="100"></canvas>
+
+  </body>
+<script src="http://smoothiecharts.org/smoothie.js"></script>
+<script>
+var alpha = new TimeSeries();
+var beta = new TimeSeries();
+var gamma = new TimeSeries();
+function createTimeline() {
+        var chart = new SmoothieChart();
+        chart.addTimeSeries(alpha, { strokeStyle: 'rgba(255, 0, 0, 1)', fillStyle: 'rgba(255, 0, 0, 0.2)', lineWidth: 4 });
+		chart.addTimeSeries(beta, { strokeStyle: 'rgba(0, 255, 0, 1)', fillStyle: 'rgba(0, 255, 0, 0.2)', lineWidth: 4 });
+        chart.addTimeSeries(gamma, { strokeStyle: 'rgba(0, 0, 255, 1)', fillStyle: 'rgba(0, 0, 255, 0.2)', lineWidth: 4 });
+
+        chart.streamTo(document.getElementById("chart"), 500);
+      }
+
+function orientation(event){
+  alpha.append(new Date().getTime(), event.alpha);
+  beta.append(new Date().getTime(), event.beta);
+  gamma.append(new Date().getTime(), event.gamma);
+}
+
+if(window.DeviceOrientationEvent){
+  window.addEventListener("deviceorientation", orientation, false);
+}else{
+  console.log("DeviceOrientationEvent is not supported");
+}
+</script>
