@@ -1,27 +1,46 @@
-<input type="text" id="in">
+<div id ="s" style="overflow-y: scroll; height:400px;">
 <p id="out"></p>
+</div>
+<br>
+<input type="text" id="in" style="width:100%;">
 <script>
     var out = document.getElementById("out");
     var ind = document.getElementById("in");
-    var WS = new WebSocket("wss://wsninjaisdown.herokuapp.com");
-    WS.onopen = function (event) {
-        console.log("WebSocket is open now.");
-        out.innerHTML += `<span style="color:green">WS Open</span> <br>`;
-    };
-    WS.onmessage = function (event) {
-        out.innerHTML += event.data + '<br>';
-    };
-    WS.onerror = function (event) {
-        out.innerHTML += `<span style="color:red">Error:${event}</span> <br>`;
-    };
-    WS.onclose = function(event) {
-        out.innerHTML += `<span style="color:red">Websocket closed</span> <br>`
-    };
+	var scroll = document.getElementById("s");
+	var WS;
+	var t;
+	var server = "wss://wsninjaisdown.herokuapp.com";
+	function startC(x){
+		WS = new WebSocket(x);
+		WS.onopen = function (event) {
+			console.log(`Connected to ${x}`);
+			out.innerHTML += `<span style="color:green">Connected to ${x}</span> <br>`;
+		};
+		WS.onmessage = function (event) {
+			console.log(event)
+			out.innerHTML += event.data + '<br>';
+			scroll.scrollTop = scroll.scrollHeight;
+		};
+		WS.onerror = function (event) {
+			out.innerHTML += `<span style="color:red">Error:${event}</span> <br>`;
+		};
+		WS.onclose = function(event) {
+			out.innerHTML += `<span style="color:red">Websocket closed</span> <br>`
+			t = setTimeout(()=> startC(server),1000)
+			WS = null;
+		};
+	}
+	startC(server);
     ind.addEventListener("keyup", function (event) {
         event.preventDefault();
         if (event.keyCode === 13) {
             WS.send(ind.value);
+			out.innerHTML += `${ind.value} <br>`;
             ind.value = '';
+			scroll.scrollTop = scroll.scrollHeight;
         }
     });
+	window.onunload = function() {
+		WS.send('A user has left')
+	}
 </script>
