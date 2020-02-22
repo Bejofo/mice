@@ -1,0 +1,359 @@
+<style>
+    #tracks {
+        height: 350;
+    }
+    
+    .track {
+        float: left;
+        margin-right: 30px;
+    }
+</style>
+
+<div id="tracks">
+    <div class="track">
+        <textarea rows="20" cols="14">
+D4,0.2
+D4,0.2
+D5,0.4
+A4,0.6
+Ab4,0.4
+G4,0.4
+F4,0.4
+D4,0.2
+F4,0.2
+G4,0.4
+        </textarea>
+        <br>
+        <button onclick="removeTrack(this)">Delete</button> Mute:
+        <input type="checkbox">
+    </div>
+    <!---->
+</div>
+<div>
+    <a id="myButton" href="#">Download</a>
+    <button id="play">Play</button>
+    <button id="addTrack">Add Track</button>
+</div>
+<script>
+    //To do, rewrite averaging so that other track scale back to normal volume when others are resting.
+    var samplingRate = 44.1 * 1000;
+    var sec = samplingRate;
+    var amp = 1 / 2;
+    var rampThres = samplingRate * 0.05;
+    Math.TAU = Math.PI * 2;
+    //https://gist.github.com/i-Robi/8684800
+    const n = {
+        "C0": 16.35,
+        "C#0": 17.32,
+        "Db0": 17.32,
+        "D0": 18.35,
+        "D#0": 19.45,
+        "Eb0": 19.45,
+        "E0": 20.60,
+        "F0": 21.83,
+        "F#0": 23.12,
+        "Gb0": 23.12,
+        "G0": 24.50,
+        "G#0": 25.96,
+        "Ab0": 25.96,
+        "A0": 27.50,
+        "A#0": 29.14,
+        "Bb0": 29.14,
+        "B0": 30.87,
+        "C1": 32.70,
+        "C#1": 34.65,
+        "Db1": 34.65,
+        "D1": 36.71,
+        "D#1": 38.89,
+        "Eb1": 38.89,
+        "E1": 41.20,
+        "F1": 43.65,
+        "F#1": 46.25,
+        "Gb1": 46.25,
+        "G1": 49.00,
+        "G#1": 51.91,
+        "Ab1": 51.91,
+        "A1": 55.00,
+        "A#1": 58.27,
+        "Bb1": 58.27,
+        "B1": 61.74,
+        "C2": 65.41,
+        "C#2": 69.30,
+        "Db2": 69.30,
+        "D2": 73.42,
+        "D#2": 77.78,
+        "Eb2": 77.78,
+        "E2": 82.41,
+        "F2": 87.31,
+        "F#2": 92.50,
+        "Gb2": 92.50,
+        "G2": 98.00,
+        "G#2": 103.83,
+        "Ab2": 103.83,
+        "A2": 110.00,
+        "A#2": 116.54,
+        "Bb2": 116.54,
+        "B2": 123.47,
+        "C3": 130.81,
+        "C#3": 138.59,
+        "Db3": 138.59,
+        "D3": 146.83,
+        "D#3": 155.56,
+        "Eb3": 155.56,
+        "E3": 164.81,
+        "F3": 174.61,
+        "F#3": 185.00,
+        "Gb3": 185.00,
+        "G3": 196.00,
+        "G#3": 207.65,
+        "Ab3": 207.65,
+        "A3": 220.00,
+        "A#3": 233.08,
+        "Bb3": 233.08,
+        "B3": 246.94,
+        "C4": 261.63,
+        "C#4": 277.18,
+        "Db4": 277.18,
+        "D4": 293.66,
+        "D#4": 311.13,
+        "Eb4": 311.13,
+        "E4": 329.63,
+        "F4": 349.23,
+        "F#4": 369.99,
+        "Gb4": 369.99,
+        "G4": 392.00,
+        "G#4": 415.30,
+        "Ab4": 415.30,
+        "A4": 440.00,
+        "A#4": 466.16,
+        "Bb4": 466.16,
+        "B4": 493.88,
+        "C5": 523.25,
+        "C#5": 554.37,
+        "Db5": 554.37,
+        "D5": 587.33,
+        "D#5": 622.25,
+        "Eb5": 622.25,
+        "E5": 659.26,
+        "F5": 698.46,
+        "F#5": 739.99,
+        "Gb5": 739.99,
+        "G5": 783.99,
+        "G#5": 830.61,
+        "Ab5": 830.61,
+        "A5": 880.00,
+        "A#5": 932.33,
+        "Bb5": 932.33,
+        "B5": 987.77,
+        "C6": 1046.50,
+        "C#6": 1108.73,
+        "Db6": 1108.73,
+        "D6": 1174.66,
+        "D#6": 1244.51,
+        "Eb6": 1244.51,
+        "E6": 1318.51,
+        "F6": 1396.91,
+        "F#6": 1479.98,
+        "Gb6": 1479.98,
+        "G6": 1567.98,
+        "G#6": 1661.22,
+        "Ab6": 1661.22,
+        "A6": 1760.00,
+        "A#6": 1864.66,
+        "Bb6": 1864.66,
+        "B6": 1975.53,
+        "C7": 2093.00,
+        "C#7": 2217.46,
+        "Db7": 2217.46,
+        "D7": 2349.32,
+        "D#7": 2489.02,
+        "Eb7": 2489.02,
+        "E7": 2637.02,
+        "F7": 2793.83,
+        "F#7": 2959.96,
+        "Gb7": 2959.96,
+        "G7": 3135.96,
+        "G#7": 3322.44,
+        "Ab7": 3322.44,
+        "A7": 3520.00,
+        "A#7": 3729.31,
+        "Bb7": 3729.31,
+        "B7": 3951.07,
+        "C8": 4186.01,
+        "C#8": 4434.92,
+        "Db8": 4434.92,
+        "D8": 4698.64,
+        "D#8": 4978.03,
+        "Eb8": 4978.03
+    }
+
+    function clamp(min, max, val) {
+        return Math.min(Math.max(val, min), max);
+    }
+
+    function rendTrack(m) {
+        var a = [];
+        var mult = 126 * amp;
+        m.forEach(note => {
+            var duration = note[1] * sec;
+            //var z = 1 / (note[0] / samplingRate);
+            var c = Math.TAU * (note[0] / samplingRate);
+            for (var i = 0; i < duration; i += 1 / 4) {
+                var r = Math.sin(c * i) * mult;
+                //r *= Math.min(2 * Math.sin(Math.PI * (i / duration)), 1)
+
+                if (i < rampThres) { // (r)amping up 
+                    var x = i / rampThres
+                    r *= x;
+                } else if (i > duration - rampThres) { // I hate this
+                    var timeOver = i - (duration - rampThres);
+                    r *= (rampThres - timeOver) / rampThres;
+                }
+                r = Math.round(r);
+                a.push(r);
+            }
+        })
+        return a;
+    }
+
+    function rendMultiTracks(tracks) {
+        var rended = tracks.map(rendTrack);
+        var lens = tracks.map(x => x.length).reduce((a, c) => a = Math.max(a, c));
+        var r = new Array(lens);
+        for (var i = 0; i < rended.length; i++) {
+            for (var j = 0; j < rended[i].length; j++) {
+                if (r[j] !== null && r[j] !== undefined) {
+                    r[j] += rended[i][j];
+                } else if (rended[i][j] !== null && rended[i][j] !== undefined) {
+                    r[j] = rended[i][j];
+                } else {
+                    r[j] = 0;
+                }
+            }
+        }
+        for (var i = 0; i < r.length; i++) {
+            r[i] = clamp(-125, 125, (r[i] / tracks.length))
+        }
+        return r;
+    }
+
+    function createBlob(a) {
+        var header = buildWaveHeader({
+            numFrames: a.length / 4,
+            numChannels: 2
+        }, a)
+        return new Blob([header])
+    }
+
+    // https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
+    // https://gist.github.com/also/900023
+    function buildWaveHeader(opts, stuff) {
+        var numFrames = opts.numFrames;
+        var numChannels = opts.numChannels || 2;
+        var sampleRate = opts.sampleRate || 44100;
+        var bytesPerSample = opts.bytesPerSample || 2;
+        var blockAlign = numChannels * bytesPerSample;
+        var byteRate = sampleRate * blockAlign;
+        var dataSize = numFrames * blockAlign;
+        var buffer = new ArrayBuffer(44 + dataSize);
+        var dv = new DataView(buffer);
+        var p = 0;
+
+        function writeString(s) {
+            for (var i = 0; i < s.length; i++) {
+                dv.setUint8(p + i, s.charCodeAt(i));
+            }
+            p += s.length;
+        }
+
+        function writeUint32(d) {
+            dv.setUint32(p, d, true);
+            p += 4;
+        }
+
+        function writeInt8(d) {
+            dv.setInt8(p, d, true);
+            p += 1;
+        }
+
+
+        function writeUint16(d) {
+            dv.setUint16(p, d, true);
+            p += 2;
+        }
+
+        writeString('RIFF'); // ChunkID
+        writeUint32(dataSize + 36); // ChunkSize
+        writeString('WAVE'); // Format
+        writeString('fmt '); // Subchunk1ID
+        writeUint32(16); // Subchunk1Size
+        writeUint16(1); // AudioFormat
+        writeUint16(numChannels); // NumChannels
+        writeUint32(sampleRate); // SampleRate
+        writeUint32(byteRate); // ByteRate
+        writeUint16(blockAlign); // BlockAlign
+        writeUint16(bytesPerSample * 8); // BitsPerSample
+        writeString('data'); // Subchunk2ID
+        writeUint32(dataSize); // Subchunk2Size
+        stuff.map(x => writeInt8(x));
+        return buffer;
+    }
+
+    function parseText(str) {
+        str = str.trim();
+        if (str == "") {
+            return [];
+        }
+        var result = [];
+        var a = str.split("\n");
+        a.forEach(line => {
+            var l = line.split(",");
+            result.push([n[l[0]], parseFloat(l[1])]);
+        })
+        return result;
+    }
+
+    document.getElementById('play').onclick = function(event) {
+        var url = generateAudio();
+        playAudio(url);
+    }
+
+    document.getElementById('addTrack').onclick = function(event) {
+        var t = document.createElement("div")
+        t.className = "track"
+        t.innerHTML = `
+        <textarea rows="20" cols="14"></textarea>
+        <br>
+        <button onclick="removeTrack(this)">Delete</button> Mute:
+        <input type="checkbox">
+        `;
+        document.getElementById("tracks").appendChild(t);
+    }
+
+    function removeTrack(el) {
+        el.parentNode.remove();
+    }
+
+    function generateAudio() {
+        var tracks = document.getElementById("tracks").getElementsByClassName("track");
+        var mix = [];
+        for (let track of tracks) {
+            if (track.getElementsByTagName("input")[0].checked == false) {
+                mix.push(parseText(track.getElementsByTagName("textarea")[0].value));
+            }
+        }
+        return window.URL.createObjectURL(createBlob(rendMultiTracks(mix)));
+    }
+
+    function playAudio(x) {
+        var aud = new window.Audio();
+        aud.src = x;
+        aud.play();
+    }
+    document.getElementById('myButton').onclick = function(event) {
+        var url = generateAudio();
+        this.href = url;
+        this.target = '_blank';
+        this.download = 'avg.wav';
+    }
+</script>
