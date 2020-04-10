@@ -54,8 +54,12 @@ Win by checkmate<br>
 
         var e = {};
         d.forEach(f => {
+		 try{
             var g = game.get(f.match(/[a-h][1-8]/gm)[0]);
             g && (e[f.match(/[a-h][1-8]/gm)[0]] = g.color + g.type.toUpperCase())
+			} catch(e){
+				alert('error happened')
+			}
         })
 		/*
 		for(tile in e){
