@@ -39,11 +39,11 @@ Win by checkmate<br>
     function renderBasedOnView() {
    
         var c = game.board();
-  console.log(game.ascii());
+		console.log(game.ascii());
         var d = [];
         c.forEach((f, g) => {
             f.forEach((h, i) => {
-                h && h.color == side && d.push(cartToChess(g, i))
+                h && d.push(cartToChess(g, i))//h.color == side && d.push(cartToChess(g, i))
             })
         })
         if (game.turn() != side) {
