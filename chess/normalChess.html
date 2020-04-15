@@ -44,8 +44,11 @@ Win by checkmate<br>
 					board.move('a8-d8')
 				}
 			}*/
-			if(e != null)
+			if(e != null){
 				setTimeout(function(){ board.position(game.fen(),false); }, 120);
+			    $('#turn').text(`${game.turn() == 'w' ? 'White' : 'Black'} to play`);
+			}
+
 			WS.send(game.fen());
             return null === e ? 'snapback' : void 0;
         },
