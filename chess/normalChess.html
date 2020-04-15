@@ -1,12 +1,16 @@
 <div id="board" style="width: 400px"></div>
 <div id='turn'></div>
-<p>How to play: <br>
-You won't be able to see your opponent's pieces unless one of you units "sees" them<br>
-Each square is labeled with how much pieces are capable of moving to that square. This includes both your pieces and your opponent's.<br>
-Win by checkmate<br>
-<b>Protip: The key to victory is to not lose any pieces, while taking your opponet's pieces<b>
+<b id="tips">Protip: The key to victory is to not lose any pieces, while taking your opponet's pieces</b>
 </p>
 <button onclick="board.flip();">Flip</button>
+<label>Promote pawns to:</label>
+<select id="defaultPromotion">
+  <option value="q">Queens</option>
+  <option value="b">Bishops</option>
+  <option value="n">Knights</option>
+  <option value="r">Rooks</option>
+</select>
+  
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="./chess.js"></script>
 <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
@@ -27,34 +31,15 @@ Win by checkmate<br>
             var e = game.move({
                 from: c,
                 to: d,
-                promotion: 'q'
+                promotion: $("#defaultPromotion").val()
             });
-			/*
-			if(e){
-				if(e.flags.includes('k') && side == 'w'){
-					board.move('h1-f1')
-				}
-				if(e.flags.includes('k') && side == 'b'){
-					board.move('h8-f8')
-				}
-				if(e.flags.includes('q') && side == 'w'){
-					board.move('a1-d1')
-				}
-				if(e.flags.includes('q') && side == 'b'){
-					board.move('a8-d8')
-				}
-			}*/
 			if(e != null){
 				setTimeout(function(){ board.position(game.fen(),false); }, 120);
 			    $('#turn').text(`${game.turn() == 'w' ? 'White' : 'Black'} to play`);
 			}
-
 			WS.send(game.fen());
             return null === e ? 'snapback' : void 0;
-        },
-        onSnapEnd = function () {
-            return;
-        };
+        }
 
     function cartToChess(c, d) {
         return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'][d] + [8, 7, 6, 5, 4, 3, 2, 1][c]
@@ -66,7 +51,6 @@ Win by checkmate<br>
 		board.position(game.fen());
         $('#turn').text(`${game.turn() == 'w' ? 'White' : 'Black'} to play`);
     }
-	
     var cfg = {
         draggable: !0,
         position: 'start',
@@ -74,8 +58,7 @@ Win by checkmate<br>
 		snapbackSpeed: 300,
 		snapSpeed: 100,
         onDragStart: onDragStart,
-        onDrop: onDrop,
-        onSnapEnd: onSnapEnd
+        onDrop: onDrop
     };
     board = ChessBoard('board', cfg);
     var WS = new WebSocket('wss://wsninjaisdown.herokuapp.com');
@@ -93,14 +76,10 @@ Win by checkmate<br>
     WS.onerror = iesucks;
     WS.onopen = () => { setInterval(function () { WS.send('p') }, 3000) };
     side = window.location.hash.substr(1) == 'b' ? 'b' : 'w';
+	var flavor = [
+		"Protip: Don't get checkmated",
+		""
+	]
+	$("#tips").text(flavor[Math.floor(Math.random()*flavor.length)])
     renderBasedOnView();
-    function turnToggle() {
-        function set_turn(chess, color) {
-            var tokens = chess.fen().split(' ');
-            tokens[1] = color;
-            tokens[3] = '-';
-            return chess.load(tokens.join(' '));
-        }
-        return set_turn(game,game.turn() == 'w'?'b':'w')
-    }
 </script>
