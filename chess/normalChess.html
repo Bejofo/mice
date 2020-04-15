@@ -44,7 +44,8 @@ Win by checkmate<br>
 					board.move('a8-d8')
 				}
 			}*/
-			board.position(game.fen(),false);
+			if(e != null)
+				setTimeout(function(){ board.position(game.fen(),false); }, 120);
 			WS.send(game.fen());
             return null === e ? 'snapback' : void 0;
         },
@@ -66,6 +67,9 @@ Win by checkmate<br>
     var cfg = {
         draggable: !0,
         position: 'start',
+		moveSpeed: 'slow',
+		snapbackSpeed: 300,
+		snapSpeed: 100,
         onDragStart: onDragStart,
         onDrop: onDrop,
         onSnapEnd: onSnapEnd
