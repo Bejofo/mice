@@ -6,6 +6,7 @@ Each square is labeled with how much pieces are capable of moving to that square
 Win by checkmate<br>
 <b>Protip: The key to victory is to not lose any pieces, while taking your opponet's pieces<b>
 </p>
+<button onclick="board.flip();">Flip</button>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="./chess.js"></script>
 <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
@@ -17,8 +18,10 @@ Win by checkmate<br>
 <script>
     var board, game = new Chess,
         side = 'w',
-        onDragStart = function (c, d) {
-            if (!0 === game.game_over() ||d.split('')[0] !== side||'w' === game.turn() && -1 !== d.search(/^b/) || 'b' === game.turn() && -1 !== d.search(/^w/)) return !1
+		onDragStart = function (c, d) {
+            if (game.game_over() ||side !== game.turn() ){
+				return false;
+			}
         },
         onDrop = function (c, d) {
             var e = game.move({
@@ -26,10 +29,27 @@ Win by checkmate<br>
                 to: d,
                 promotion: 'q'
             });
-            return null === e ? 'snapback' : void WS.send(game.fen())
+			/*
+			if(e){
+				if(e.flags.includes('k') && side == 'w'){
+					board.move('h1-f1')
+				}
+				if(e.flags.includes('k') && side == 'b'){
+					board.move('h8-f8')
+				}
+				if(e.flags.includes('q') && side == 'w'){
+					board.move('a1-d1')
+				}
+				if(e.flags.includes('q') && side == 'b'){
+					board.move('a8-d8')
+				}
+			}*/
+			board.position(game.fen(),false);
+			WS.send(game.fen());
+            return null === e ? 'snapback' : void 0;
         },
         onSnapEnd = function () {
-            renderBasedOnView();
+            return;
         };
 
     function cartToChess(c, d) {
@@ -37,66 +57,12 @@ Win by checkmate<br>
     }
 
     function renderBasedOnView() {
-   
         var c = game.board();
 		console.log(game.ascii());
-        var d = [];
-        c.forEach((f, g) => {
-            f.forEach((h, i) => {
-                h && d.push(cartToChess(g, i))//h.color == side && d.push(cartToChess(g, i))
-            })
-        })
-        if (game.turn() != side) {
-            turnToggle(), game.moves().forEach(f => d.push(f)), turnToggle()
-        } else {
-            game.moves().forEach(f => d.push(f))
-        }
-
-        var e = {};
-        d.forEach(f => {
-		 try{
-            var g = game.get(f.match(/[a-h][1-8]/gm)[0]);
-            g && (e[f.match(/[a-h][1-8]/gm)[0]] = g.color + g.type.toUpperCase())
-			} catch(e){
-				alert('error happened')
-			}
-        })
-		board.position(e);
-		//labelBoardLikeMineSweeperProperly();
+		board.position(game.fen());
         $('#turn').text(`${game.turn() == 'w' ? 'White' : 'Black'} to play`);
     }
 	
-	function labelBoardLikeMineSweeperProperly(){
-		var heatmap = {};
-		var a = game;
-		a.moves({verbose:true}).forEach(move =>{
-			if(!move.flags.includes("q") && !move.flags.includes("k")){
-				if(!heatmap[move.to]){
-					heatmap[move.to] =1;
-				} else {
-					heatmap[move.to]++;
-				}
-				
-			}
-		})
-		turnToggle();
-		a.moves({verbose:true}).forEach(move =>{
-			if(!move.flags.includes("q") && !move.flags.includes("k")){
-				if(!heatmap[move.to]){
-					heatmap[move.to] =1;
-				} else {
-					heatmap[move.to]++;
-				}
-				
-			}
-		})
-		turnToggle();
-		
-		$(".notation-322f9").remove()
-		for(square in heatmap){
-			$(".square-"+square).append(`<div class="notation-322f9 numeric-fc462">${heatmap[square]}</div>`);
-		}		
-	}
     var cfg = {
         draggable: !0,
         position: 'start',
@@ -113,7 +79,8 @@ Win by checkmate<br>
 	1. Your internet connection is crap. <br>
 	2. You're using internet explorer <br>
 	3. I made a mistake in the code somewhere <br>
-	It doesn't matter, here's a useless error message:<br> <pre>${x}</pre>`)
+	It doesn't matter, here's a useless error message:<br> <pre>${JSON.stringify(x)}</pre>`)
+	
     var ping;
     WS.onclose = iesucks;
     WS.onerror = iesucks;
