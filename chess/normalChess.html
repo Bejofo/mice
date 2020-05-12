@@ -34,6 +34,9 @@
                 to: d,
                 promotion: $("#defaultPromotion").val()
             });
+            if(game.game_over()){
+                alert("Game over");
+            }
 			if(e != null){
 				setTimeout(function(){ board.position(game.fen(),false); }, 120);
 			    $('#turn').text(`${game.turn() == 'w' ? 'White' : 'Black'} to play`);
@@ -53,7 +56,11 @@
         var c = game.board();
 		console.log(game.ascii());
 		board.position(game.fen());
-        $('#turn').text(`${game.turn() == 'w' ? 'White' : 'Black'} to play`);
+        if(!game.game_over()){
+            $('#turn').text(`${game.turn() == 'w' ? 'White' : 'Black'} to play`);
+        } else{
+            alert("Game over");
+        }
     }
     var cfg = {
         draggable: !0,
