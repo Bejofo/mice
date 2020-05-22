@@ -36,6 +36,7 @@
             });
             if(game.game_over()){
                 alert("Game over");
+				WS.send(game.fen());
             }
 			if(e != null){
 				setTimeout(function(){ board.position(game.fen(),false); }, 120);
