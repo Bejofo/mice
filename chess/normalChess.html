@@ -1,7 +1,6 @@
-<div id="board" style="width: 400px"></div>
+<div id="board" style="width: 560px"></div>
 <div id='turn'></div>
-<b id="tips">Protip: The key to victory is to not lose any pieces, while taking your opponet's pieces</b>
-</p>
+<body style="background-color:#f0d9b5;">
 <button onclick="board.flip();">Flip</button>
 <label>Promote pawns to:</label>
 <select id="defaultPromotion">
@@ -10,15 +9,21 @@
   <option value="n">Knights</option>
   <option value="r">Rooks</option>
 </select>
-  
+<style>
+.clearfix-7da63{clear:both}.board-b72b1{/* border:2px solid #; */box-sizing:content-box;}.square-55d63{float:left;position:relative;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.white-1e1d7{background-color:#f0d9b5;color:#b58863}.black-3c85d{background-color:#b58863;color:#f0d9b5}.highlight1-32417,.highlight2-9c5d2{box-shadow:inset 0 0 3px 3px #ff0}.notation-322f9{cursor:default;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:14px;position:absolute}.alpha-d2270{bottom:1px;right:3px}.numeric-fc462{top:2px;left:2px}
+</style>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="./chess.js"></script>
 <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
         integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
-        crossorigin="anonymous"></script><link rel="stylesheet"
+        crossorigin="anonymous"></script>
+		
+<!--		
+<link rel="stylesheet"
       href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
       integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
       crossorigin="anonymous">
+	 -->
 <script>
 	var chessHistory = [];
     var board, game = new Chess,
@@ -75,6 +80,7 @@
         onDrop: onDrop
     };
     board = ChessBoard('board', cfg);
+	board.resize();
     var WS = new WebSocket('wss://wsninjaisdown.herokuapp.com');
     WS.onmessage = function (c) {
         console.log('updating...'), c.data != 'p' ? (game = new Chess(c.data), renderBasedOnView(),chessHistory.push(c.data)) : 0;
@@ -90,10 +96,6 @@
     WS.onerror = iesucks;
     WS.onopen = () => { setInterval(function () { WS.send('p') }, 3000) };
     side = window.location.hash.substr(1) == 'b' ? 'b' : 'w';
-	var flavor = [
-		"Protip: Don't get checkmated",
-		""
-	]
-	$("#tips").text(flavor[Math.floor(Math.random()*flavor.length)])
     renderBasedOnView();
 </script>
+<body/>
