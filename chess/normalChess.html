@@ -34,11 +34,12 @@
 			}
         },
         onDrop = function (c, d) {
-            var e = game.move({
+            var template = {
                 from: c,
                 to: d,
                 promotion: $("#defaultPromotion").val()
-            });
+            };
+            var e = game.move(template);
             if(game.game_over()){
 				WS.send(game.fen());
                 alert("Game over");
@@ -48,7 +49,7 @@
 			    $('#turn').text(`${game.turn() == 'w' ? 'White' : 'Black'} to play`);
 					chessHistory.push(game.fen());
 				if(!game.game_over()){
-					WS.send(game.fen());
+					WS.send(JSON.stringify(template));
 				}
 			}
 			
@@ -83,7 +84,7 @@
 	board.resize();
     var WS = new WebSocket('wss://wsninjaisdown.herokuapp.com');
     WS.onmessage = function (c) {
-        console.log('updating...'), c.data != 'p' ? (game = new Chess(c.data), renderBasedOnView(),chessHistory.push(c.data)) : 0;
+        console.log('updating...'), c.data != 'p' ? (game.move(JSON.parse(c.data)), renderBasedOnView(),chessHistory.push(c.data)) : 0;
     };
     var iesucks = x => document.write(`You lost your websocket connection. This could happen for the following reasons <br>
 	1. Your internet connection is crap. <br>
