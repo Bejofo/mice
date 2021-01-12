@@ -41,7 +41,7 @@
             };
             var e = game.move(template);
             if(game.game_over()){
-				WS.send(game.fen());
+				WS.send(JSON.stringify(template));
                 alert("Game over");
             }
 			if(e != null){
