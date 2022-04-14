@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.19.1/full/pyodide.js"></script>
+</head>
+
+
+<style>
+  body {
+    background: wheat;
+  }
+
+  .row {
+    display: flex;
+  }
+
+  .column {
+    flex: 50%;
+    height: 100%;
+    padding: 1%;
+  }
+
+  .left {
+    border-right: 1px solid silver;
+  }
+</style>
+
+
+<body>
+  <div class="row">
+    <div class="column left">
+      <textarea id="code" spellcheck="false" rows="16" style="width: 90%;"></textarea>
+      <br />
+      <button onclick="evaluatePython()">Run</button>
+      <button onclick="resetCode()">Reset Code</button>
+      <br />
+      <br />
+      <div>Output:</div>
+      <textarea id="output" style="width: 90%;" rows="6" disabled></textarea>
+    </div>
+
+    <div class="column">
+      <p>
+        Write a function that returns the distance from the origin , (0,0).
+        <br>
+        Everything is executed in broswer. Writing infinite loops will likely crash your broswer. You've been warned.
+      </p>
+    </div>
+  </div>
+
+  <script src= "./main.js"> </script>
+</body>
+
+</html>

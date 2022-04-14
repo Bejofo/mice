@@ -1,0 +1,4 @@
+boilerplate_code: |
+  def dist(x,y):
+    return 0
+problem_statement:

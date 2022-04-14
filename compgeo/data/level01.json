@@ -1,0 +1,10 @@
+{
+    "boilerplate_code": "# write python here !!\ndef dist(x,y):\n  return\n",
+    "test_cases":[ 
+        [3,4,5],
+        [4,3,5],
+        [0,0,0],
+        [-1,1, 1.41421356237],
+        [1,-1, 1.41421356237]
+    ]
+}
