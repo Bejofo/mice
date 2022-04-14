@@ -34,12 +34,33 @@ async function evaluatePython() {
 
     var proxy = pyodide.globals.get('l').get('dist');
     var passesTestCases = true;
+
+    function matchingAnswers(a,b){
+        if (a === b){
+            return true;
+        }
+        const atype = typeof a;
+        const btype = typeof b;
+
+        if ( atype !== btype){
+            return false;
+        }
+
+        if( atype === 'number' && btype === 'number' && Math.abs(a-b) < 0.0001) {
+            return true;
+        }
+        return false
+    }
+
     for (var testCase of test_cases){
         const testArgs = testCase.slice(0,-1);
         const expectedAns = testCase.slice(-1).pop();
-        var ans = proxy.apply(undefined,testArgs)
-        console.log(ans)
-        if(ans !== expectedAns && ( typeof ans  === "number" && typeof expectedAns === "number"  && Math.abs(ans-expectedAns) > 0.0001 )){
+        var ans = proxy.apply(null,testArgs)
+
+        console.log(ans,expectedAns)
+
+        if (ans === undefined || !matchingAnswers(ans,expectedAns))
+        {
             passesTestCases = false;
             break
         }
